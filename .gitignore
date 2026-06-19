@@ -1,0 +1,46 @@
+# Terraform
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
+infra/.terraform.tfstate.lock.info
+# infra/terraform.tfvars holds your deployment-specific config (domain,
+# hosted-zone ID, AWS account ID in the OIDC ARN). It's untracked so forks
+# start from terraform.tfvars.example and nobody publishes their own account
+# identifiers. Copy the .example to terraform.tfvars and fill in your values.
+infra/terraform.tfvars
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+Icon
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Skills (Perplexity Computer workspace artifacts)
+skills/
+
+# Local Codex worktrees
+.claude/worktrees/
+
+# Browser verification artifacts
+.playwright-mcp/

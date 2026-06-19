@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearson 31-2 · Speed Polar Diagram</title>
+  <meta name="description" content="Interactive speed polar diagram for the Pearson 31-2 sailboat (1987–1991). VPP-computed performance data across true wind speeds from 6–20 knots." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+      --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+      --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+      --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+      --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+      --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+      --space-4: 1rem;    --space-5: 1.25rem; --space-6: 1.5rem;
+      --space-8: 2rem;    --space-10: 2.5rem; --space-12: 3rem;
+      --space-16: 4rem;   --space-20: 5rem;
+
+      /* Maritime dark palette */
+      --bg-base:      #0a0e1a;
+      --bg-surface:   #0f1628;
+      --bg-elevated:  #141c35;
+      --bg-card:      #182040;
+      --border:       rgba(100, 150, 220, 0.15);
+      --border-bright: rgba(100, 170, 255, 0.35);
+
+      --text-primary:  #e8eef8;
+      --text-secondary: #8ba4c8;
+      --text-muted:    #4a6080;
+
+      --accent-teal:   #00c5a8;
+      --accent-blue:   #2b8fff;
+      --accent-amber:  #f5a623;
+      --accent-coral:  #ff6b6b;
+
+      /* Wind speed colors */
+      --ws-6:   #3b82f6;   /* blue */
+      --ws-8:   #06b6d4;   /* cyan */
+      --ws-10:  #10b981;   /* emerald */
+      --ws-12:  #84cc16;   /* lime */
+      --ws-14:  #eab308;   /* yellow */
+      --ws-16:  #f97316;   /* orange */
+      --ws-20:  #ef4444;   /* red */
+
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    /* ── Layout ── */
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: var(--space-6) var(--space-8);
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0,10,30,0.8) 0%, transparent 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .boat-logo {
+      flex-shrink: 0;
+    }
+
+    .header-title h1 {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .header-title .subtitle {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-top: var(--space-1);
+    }
+
+    .phrf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: rgba(0, 197, 168, 0.12);
+      border: 1px solid rgba(0, 197, 168, 0.3);
+      color: var(--accent-teal);
+      font-size: var(--text-xs);
+      font-family: var(--font-mono);
+      padding: var(--space-1) var(--space-3);
+      border-radius: 99px;
+      font-weight: 500;
+    }
+    .dashboard-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2) var(--space-3);
+      border-radius: 99px;
+      border: 1px solid rgba(43, 143, 255, 0.45);
+      background: rgba(43, 143, 255, 0.16);
+      color: #d7e9ff;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .dashboard-link:hover {
+      border-color: rgba(43, 143, 255, 0.7);
+      background: rgba(43, 143, 255, 0.24);
+      color: #f0f7ff;
+    }
+
+    /* ── Main content ── */
+    .main {
+      padding: var(--space-6) var(--space-8);
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: var(--space-8);
+      align-items: start;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Polar Chart Container ── */
+    .chart-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      overflow: hidden;
+    }
+
+    .chart-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(0, 50, 120, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #polarCanvas {
+      display: block;
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      touch-action: none;
+    }
+
+    /* ── Tooltip ── */
+    .polar-tooltip {
+      position: fixed;
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--text-xs);
+      font-family: var(--font-mono);
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.12s ease;
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    .polar-tooltip.visible { opacity: 1; }
+
+    .tooltip-tws { font-size: var(--text-xs); margin-bottom: var(--space-1); }
+    .tooltip-row { display: flex; justify-content: space-between; gap: var(--space-4); }
+    .tooltip-label { color: var(--text-secondary); }
+    .tooltip-val { color: var(--text-primary); font-weight: 600; }
+
+    /* ── Wind speed toggles ── */
+    .wind-controls {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .controls-title {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-4);
+    }
+
+    .wind-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .wind-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      transition: all 0.15s ease;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      user-select: none;
+    }
+
+    .wind-btn:hover { border-color: var(--border-bright); color: var(--text-primary); }
+
+    .wind-btn.active {
+      color: var(--text-primary);
+      border-color: currentColor;
+    }
+
+    .wind-btn .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .ctrl-btn {
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      font-size: var(--text-xs);
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ctrl-btn:hover { border-color: var(--border-bright); color: var(--text-primary); }
+
+    /* ── VMG overlay toggle ── */
+    .vmg-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border);
+    }
+
+    .toggle-label {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-switch.on { background: rgba(0, 197, 168, 0.3); border-color: var(--accent-teal); }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s, background 0.2s;
+    }
+
+    .toggle-switch.on::after { left: 18px; background: var(--accent-teal); }
+
+    /* ── Right sidebar ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      position: sticky;
+      top: var(--space-6);
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .card-title {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-5);
+    }
+
+    /* ── Specs grid ── */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .spec-item { }
+    .spec-label {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .spec-value {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* ── VMG table ── */
+    .vmg-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+
+    .vmg-table th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 400;
+      padding: var(--space-2) var(--space-2);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .vmg-table td {
+      padding: var(--space-2) var(--space-2);
+      border-bottom: 1px solid rgba(100,130,180,0.08);
+    }
+
+    .vmg-table tr:last-child td { border-bottom: none; }
+
+    .vmg-tws { color: var(--text-secondary); }
+    .vmg-val { color: var(--text-primary); font-weight: 500; }
+    .vmg-angle { color: var(--text-secondary); font-size: 0.7rem; }
+    .vmg-spd { color: var(--accent-teal); }
+
+    /* ── Compass ── */
+    .compass-note {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      margin-top: var(--space-4);
+      line-height: 1.6;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: var(--space-4) var(--space-8);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .footer-note {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 600px;
+    }
+
+    .footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: var(--text-xs);
+    }
+
+    .footer a:hover { color: var(--text-secondary); }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .main {
+        grid-template-columns: 1fr;
+        padding: var(--space-4);
+      }
+      .sidebar { position: static; }
+      .specs-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .header { padding: var(--space-4); }
+      .main { padding: var(--space-3); gap: var(--space-4); }
+      .chart-wrapper { padding: var(--space-4); }
+      .specs-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── Animated wind label highlight ── */
+    .highlighted-wind {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ── Selected point indicator ── */
+    @keyframes pulse-ring {
+      0%   { opacity: 1; r: 6; }
+      100% { opacity: 0; r: 14; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-brand">
+      <!-- SVG Sailboat Logo -->
+      <svg class="boat-logo" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-label="Pearson 31-2 sailboat logo">
+        <rect width="48" height="48" rx="10" fill="rgba(0,50,120,0.4)" stroke="rgba(100,170,255,0.2)" stroke-width="1"/>
+        <!-- Hull -->
+        <path d="M8 34 Q24 38 40 34 L38 36 Q24 41 10 36 Z" fill="#2b8fff" opacity="0.8"/>
+        <!-- Mast -->
+        <line x1="24" y1="34" x2="24" y2="8" stroke="#e8eef8" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Mainsail -->
+        <path d="M24 10 L24 34 L38 30 Z" fill="rgba(232,238,248,0.9)" stroke="rgba(232,238,248,0.3)" stroke-width="0.5"/>
+        <!-- Headsail -->
+        <path d="M24 16 L24 34 L14 32 Z" fill="rgba(0,197,168,0.7)" stroke="rgba(0,197,168,0.3)" stroke-width="0.5"/>
+        <!-- Boom -->
+        <line x1="24" y1="34" x2="37" y2="32" stroke="#e8eef8" stroke-width="1" stroke-linecap="round"/>
+        <!-- Water line -->
+        <line x1="4" y1="37" x2="44" y2="37" stroke="rgba(43,143,255,0.3)" stroke-width="0.5"/>
+      </svg>
+
+      <div class="header-title">
+        <h1>Pearson 31-2</h1>
+        <div class="subtitle">Speed Polar Diagram · Masthead Sloop · 1987–1991</div>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap: var(--space-3); flex-wrap: wrap;">
+      <a class="dashboard-link" href="../index.html">← Dashboard</a>
+      <span class="phrf-badge">
+        <span>PHRF</span>
+        <span style="opacity:0.6">·</span>
+        <span>156–165</span>
+      </span>
+      <span class="phrf-badge" style="background:rgba(43,143,255,0.12); border-color:rgba(43,143,255,0.3); color:var(--accent-blue);">
+        <span>HS 6.76 kn</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Chart Section -->
+    <div class="chart-section">
+      <div class="chart-wrapper">
+        <canvas id="polarCanvas"></canvas>
+        <div class="polar-tooltip" id="tooltip">
+          <div class="tooltip-tws" id="tt-tws"></div>
+          <div class="tooltip-row"><span class="tooltip-label">TWA</span><span class="tooltip-val" id="tt-twa"></span></div>
+          <div class="tooltip-row"><span class="tooltip-label">BSP</span><span class="tooltip-val" id="tt-bsp"></span></div>
+          <div class="tooltip-row"><span class="tooltip-label">VMG</span><span class="tooltip-val" id="tt-vmg"></span></div>
+        </div>
+      </div>
+
+      <!-- Wind Speed Controls -->
+      <div class="wind-controls">
+        <div class="controls-title">True Wind Speed — Toggle Overlays</div>
+        <div class="wind-btns" id="windBtns"></div>
+        <div class="btn-group">
+          <button class="ctrl-btn" id="btnAll">Show All</button>
+          <button class="ctrl-btn" id="btnNone">Clear All</button>
+          <button class="ctrl-btn" id="btnRace">Race Set (8/10/12/16)</button>
+        </div>
+        <div class="vmg-toggle">
+          <div class="toggle-switch on" id="vmgToggle"></div>
+          <label class="toggle-label" for="vmgToggle">Show VMG Optimum Angles (Beat &amp; Run)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Specs Card -->
+      <div class="card">
+        <div class="card-title">Vessel Specifications</div>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-label">LOA</span>
+            <span class="spec-value">30.67 ft</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">LWL</span>
+            <span class="spec-value">25.42 ft</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Beam</span>
+            <span class="spec-value">10.67 ft</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Draft</span>
+            <span class="spec-value">5.80 ft</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Displacement</span>
+            <span class="spec-value">10,000 lb</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Ballast</span>
+            <span class="spec-value">3,800 lb · 38%</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Sail Area</span>
+            <span class="spec-value">492.8 ft²</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">SA/D</span>
+            <span class="spec-value">17.05</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Rig</span>
+            <span class="spec-value">Masthead</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">I / J</span>
+            <span class="spec-value">42.5 / 12.8 ft</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">P / E</span>
+            <span class="spec-value">36.8 / 12.0 ft</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Hull Speed</span>
+            <span class="spec-value" style="color:var(--accent-teal)">6.76 kn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VMG Table Card -->
+      <div class="card">
+        <div class="card-title">VMG Optimum Angles</div>
+        <table class="vmg-table">
+          <thead>
+            <tr>
+              <th>TWS</th>
+              <th>Beat °</th>
+              <th>BSP</th>
+              <th>Run °</th>
+              <th>BSP</th>
+            </tr>
+          </thead>
+          <tbody id="vmgTableBody"></tbody>
+        </table>
+        <p class="compass-note">
+          Beat and run angles are TWA from dead upwind/downwind. Sail closer than beat angle to gain height; fall off below run angle to gain speed.
+        </p>
+      </div>
+
+      <!-- Performance Ratios Card -->
+      <div class="card">
+        <div class="card-title">Performance Ratios</div>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-label">D/L Ratio</span>
+            <span class="spec-value">271.8</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Comfort</span>
+            <span class="spec-value">24.45</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Capsize CSF</span>
+            <span class="spec-value">1.98</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Sail# (S#)</span>
+            <span class="spec-value">1.98</span>
+          </div>
+        </div>
+        <p class="compass-note" style="margin-top: var(--space-4);">
+          D/L 271 = moderate-heavy cruiser. CSF under 2.0 = safe in typical offshore conditions. SA/D 17 = good power for a cruiser-racer.
+        </p>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-note">
+      Polar computed via VPP scaling from Pearson 33 reference data (<a href="https://sailboatdata.com/sailboat/pearson-31-2/" target="_blank" rel="noopener">SailboatData</a> · <a href="https://www.seapilot.com/features/polars/" target="_blank" rel="noopener">Seapilot polar database</a>). Scaled using hull speed, SA/D, and displacement ratios. Indicative performance — actual speeds vary with sail trim, sea state, crew weight, and loading.
+    </p>
+    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">
+      Created with Perplexity Computer
+    </a>
+  </footer>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  Pearson 31-2 Polar Data
+// ─────────────────────────────────────────────
+const POLAR_DATA = {
+  twa: [52, 60, 75, 90, 110, 120, 135, 150],
+  tws: [6, 8, 10, 12, 14, 16, 20],
+  data: {
+    6:  [4.66, 4.97, 5.19, 5.39, 5.05, 4.86, 4.28, 3.60],
+    8:  [5.58, 5.88, 5.98, 6.18, 5.93, 5.73, 5.25, 4.57],
+    10: [6.08, 6.39, 6.48, 6.68, 6.51, 6.31, 6.03, 5.35],
+    12: [6.29, 6.59, 6.78, 6.88, 6.80, 6.80, 6.51, 6.03],
+    14: [6.35, 6.55, 6.98, 7.08, 7.09, 7.09, 6.90, 6.42],
+    16: [6.45, 6.65, 7.08, 7.28, 7.29, 7.38, 7.19, 6.80],
+    20: [6.55, 6.75, 7.18, 7.48, 7.48, 7.77, 7.78, 7.49]
+  }
+};
+
+const HULL_SPEED = 6.76;
+
+// Colors per TWS
+const TWS_COLORS = {
+  6:  '#3b82f6',
+  8:  '#06b6d4',
+  10: '#10b981',
+  12: '#84cc16',
+  14: '#eab308',
+  16: '#f97316',
+  20: '#ef4444'
+};
+
+// Active wind speeds
+let activeWS = new Set([8, 10, 12, 16]);
+let showVMG = true;
+let hoveredPoint = null;
+
+// ─────────────────────────────────────────────
+//  VMG Computation
+// ─────────────────────────────────────────────
+function computeVMG(twa, bsp) {
+  return bsp * Math.cos(twa * Math.PI / 180);
+}
+
+function getBestVMG(tws) {
+  const speeds = POLAR_DATA.data[tws];
+  let bestBeat = { vmg: 0, twa: 0, bsp: 0 };
+  let bestRun  = { vmg: 0, twa: 0, bsp: 0 };
+
+  POLAR_DATA.twa.forEach((twa, i) => {
+    const bsp = speeds[i];
+    const vmg = computeVMG(twa, bsp);
+    if (twa <= 90 && vmg > bestBeat.vmg) {
+      bestBeat = { vmg, twa, bsp };
+    }
+    if (twa > 90 && Math.abs(vmg) > bestRun.vmg) {
+      bestRun = { vmg: Math.abs(vmg), twa, bsp };
+    }
+  });
+  return { beat: bestBeat, run: bestRun };
+}
+
+// ─────────────────────────────────────────────
+//  Canvas Polar Chart
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('polarCanvas');
+const ctx = canvas.getContext('2d');
+
+function polarToXY(twa, bsp, cx, cy, scale) {
+  const rad = (twa - 90) * Math.PI / 180;
+  return {
+    x: cx + bsp * scale * Math.cos(rad),
+    y: cy + bsp * scale * Math.sin(rad)
+  };
+}
+
+// Interpolate polar curve for smooth plotting
+function interpolatePolar(tws, numPoints = 200) {
+  const speeds = POLAR_DATA.data[tws];
+  const twas = POLAR_DATA.twa;
+  const points = [];
+
+  for (let i = 0; i < numPoints; i++) {
+    const t = i / (numPoints - 1);
+    const twa = twas[0] + t * (twas[twas.length - 1] - twas[0]);
+
+    // Cubic interpolation
+    let bsp = 0;
+    for (let j = 0; j < twas.length; j++) {
+      let weight = 1;
+      for (let k = 0; k < twas.length; k++) {
+        if (k !== j) {
+          weight *= (twa - twas[k]) / (twas[j] - twas[k]);
+        }
+      }
+      bsp += speeds[j] * weight;
+    }
+    bsp = Math.max(0, bsp);
+    points.push({ twa, bsp });
+  }
+  return points;
+}
+
+function drawPolar() {
+  const dpr = window.devicePixelRatio || 1;
+  const width = canvas.clientWidth;
+  const height = Math.min(width, 680);
+  canvas.width  = width  * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cx = width * 0.5;
+  const cy = height * 0.91;  // center near bottom with headroom for 0° label
+  const maxBSP = 8.5;
+  const margin = 48;
+  const scale = (Math.min(width * 0.46, height * 0.88) - margin) / maxBSP;
+
+  ctx.clearRect(0, 0, width, height);
+
+  // ── Grid rings ──
+  const gridSpeeds = [2, 3, 4, 5, 6, 7, 8];
+  gridSpeeds.forEach(spd => {
+    const r = spd * scale;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, Math.PI, 0, false);
+    ctx.strokeStyle = spd === Math.round(HULL_SPEED)
+      ? 'rgba(43, 143, 255, 0.25)'
+      : 'rgba(100, 130, 180, 0.12)';
+    ctx.lineWidth = spd === Math.round(HULL_SPEED) ? 1.5 : 1;
+    ctx.setLineDash(spd === Math.round(HULL_SPEED) ? [4, 3] : []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Speed label
+    ctx.fillStyle = spd === Math.round(HULL_SPEED)
+      ? 'rgba(43, 143, 255, 0.7)'
+      : 'rgba(100, 130, 180, 0.5)';
+    ctx.font = `${11 * dpr / dpr}px 'IBM Plex Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`${spd}kn`, cx + 6, cy - r + 12);
+  });
+
+  // Hull speed label
+  const hsR = HULL_SPEED * scale;
+  ctx.fillStyle = 'rgba(43, 143, 255, 0.85)';
+  ctx.font = `bold 10px 'IBM Plex Mono', monospace`;
+  ctx.fillText('Hull Speed', cx + 8, cy - hsR + 24);
+
+  // ── Angle grid lines ──
+  const angles = [52, 60, 75, 90, 110, 120, 135, 150, 180];
+  angles.forEach(twa => {
+    const rad = (twa - 90) * Math.PI / 180;
+    const r = maxBSP * scale + 20;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+    ctx.strokeStyle = 'rgba(100, 130, 180, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Mirror for port
+    const radMirror = -(twa - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(radMirror), cy + r * Math.sin(radMirror));
+    ctx.strokeStyle = 'rgba(100, 130, 180, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Angle label
+    const labelR = maxBSP * scale + 20;
+    const lx = cx + labelR * Math.cos(rad);
+    const ly = cy + labelR * Math.sin(rad);
+    ctx.fillStyle = 'rgba(100, 130, 180, 0.55)';
+    ctx.font = `10px 'IBM Plex Mono', monospace`;
+    ctx.textAlign = twa > 90 ? 'left' : twa === 90 ? 'right' : 'right';
+    if (twa !== 180) {
+      ctx.fillText(`${twa}°`, lx + (twa > 90 ? 4 : -4), ly + 4);
+      // Starboard mirror label
+      const lxM = cx + labelR * Math.cos(radMirror);
+      const lyM = cy + labelR * Math.sin(radMirror);
+      ctx.textAlign = twa > 90 ? 'right' : twa === 90 ? 'right' : 'left';
+      ctx.fillText(`${twa}°`, lxM + (twa > 90 ? -4 : 4), lyM + 4);
+    }
+  });
+
+  // Vertical axis (0° / 180°)
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - maxBSP * scale - 10);
+  ctx.lineTo(cx, cy);
+  ctx.strokeStyle = 'rgba(100, 130, 180, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // 0° label
+  ctx.fillStyle = 'rgba(100, 130, 180, 0.55)';
+  ctx.font = `10px 'IBM Plex Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText('0° (Wind)', cx, cy - maxBSP * scale - 14);
+
+  // Port/Starboard labels
+  ctx.fillStyle = 'rgba(100, 130, 180, 0.4)';
+  ctx.font = `10px 'Inter', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('PORT', cx - maxBSP * scale * 0.85, cy - 8);
+  ctx.fillText('STBD', cx + maxBSP * scale * 0.85, cy - 8);
+
+  // ── Draw VMG markers ──
+  if (showVMG) {
+    POLAR_DATA.tws.forEach(tws => {
+      if (!activeWS.has(tws)) return;
+      const { beat, run } = getBestVMG(tws);
+      const color = TWS_COLORS[tws];
+
+      // Beat angle marker
+      [beat.twa, -beat.twa].forEach(angle => {
+        const pt = polarToXY(Math.abs(angle), beat.bsp, cx, cy, scale);
+        const pxOff = angle < 0 ? -cx + cx : 0;
+        const ptMirror = angle < 0 ? {
+          x: cx - (beat.bsp * scale * Math.cos((Math.abs(angle) - 90) * Math.PI / 180)),
+          y: cy + beat.bsp * scale * Math.sin((Math.abs(angle) - 90) * Math.PI / 180)
+        } : pt;
+
+        const drawPt = angle < 0 ? ptMirror : pt;
+
+        ctx.beginPath();
+        ctx.arc(drawPt.x, drawPt.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.85;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // Up triangle
+        ctx.beginPath();
+        ctx.moveTo(drawPt.x, drawPt.y - 8);
+        ctx.lineTo(drawPt.x - 5, drawPt.y - 15);
+        ctx.lineTo(drawPt.x + 5, drawPt.y - 15);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.5;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      // Run angle marker
+      [run.twa, -(run.twa)].forEach(angle => {
+        const absAngle = Math.abs(angle);
+        const rad = (absAngle - 90) * Math.PI / 180;
+        const ptX = angle < 0
+          ? cx - run.bsp * scale * Math.cos(rad)
+          : cx + run.bsp * scale * Math.cos(rad);
+        const ptY = cy + run.bsp * scale * Math.sin(rad);
+
+        ctx.beginPath();
+        ctx.arc(ptX, ptY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.85;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // Down triangle
+        ctx.beginPath();
+        ctx.moveTo(ptX, ptY + 8);
+        ctx.lineTo(ptX - 5, ptY + 15);
+        ctx.lineTo(ptX + 5, ptY + 15);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.5;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+    });
+  }
+
+  // ── Draw polar curves ──
+  POLAR_DATA.tws.forEach(tws => {
+    if (!activeWS.has(tws)) return;
+
+    const color = TWS_COLORS[tws];
+    const pts = interpolatePolar(tws);
+
+    // Starboard (positive TWA side) — solid
+    ctx.beginPath();
+    pts.forEach((pt, i) => {
+      const { x, y } = polarToXY(pt.twa, pt.bsp, cx, cy, scale);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.globalAlpha = 0.9;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Port mirror — dashed
+    ctx.beginPath();
+    pts.forEach((pt, i) => {
+      const rad = (pt.twa - 90) * Math.PI / 180;
+      const x = cx - pt.bsp * scale * Math.cos(rad);
+      const y = cy + pt.bsp * scale * Math.sin(rad);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    // Data point dots
+    POLAR_DATA.twa.forEach((twa, i) => {
+      const bsp = POLAR_DATA.data[tws][i];
+      const { x, y } = polarToXY(twa, bsp, cx, cy, scale);
+      ctx.beginPath();
+      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.9;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Port mirror dot
+      const rad = (twa - 90) * Math.PI / 180;
+      const mx = cx - bsp * scale * Math.cos(rad);
+      const my = cy + bsp * scale * Math.sin(rad);
+      ctx.beginPath();
+      ctx.arc(mx, my, 3, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.5;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+  });
+
+  // ── Hovered point highlight ──
+  if (hoveredPoint) {
+    const { tws, twa, bsp } = hoveredPoint;
+    const color = TWS_COLORS[tws];
+    const { x, y } = polarToXY(twa, bsp, cx, cy, scale);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.7;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  }
+
+  // Store chart geometry for hit-testing
+  canvas._chartGeom = { cx, cy, scale, width, height };
+}
+
+// ─────────────────────────────────────────────
+//  Mouse/Touch Hit Testing
+// ─────────────────────────────────────────────
+function getCanvasPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - rect.left) * (canvas.width / (window.devicePixelRatio || 1)) / rect.width,
+    y: (clientY - rect.top)  * (canvas.height / (window.devicePixelRatio || 1)) / rect.height
+  };
+}
+
+function hitTest(mx, my) {
+  if (!canvas._chartGeom) return null;
+  const { cx, cy, scale } = canvas._chartGeom;
+  const THRESHOLD = 18;
+
+  let best = null;
+  let bestDist = Infinity;
+
+  POLAR_DATA.tws.forEach(tws => {
+    if (!activeWS.has(tws)) return;
+    POLAR_DATA.twa.forEach((twa, i) => {
+      const bsp = POLAR_DATA.data[tws][i];
+      // Starboard
+      const rad = (twa - 90) * Math.PI / 180;
+      const x = cx + bsp * scale * Math.cos(rad);
+      const y = cy + bsp * scale * Math.sin(rad);
+      const d = Math.hypot(mx - x, my - y);
+      if (d < THRESHOLD && d < bestDist) {
+        bestDist = d;
+        best = { tws, twa, bsp, side: 'STBD' };
+      }
+      // Port
+      const px = cx - bsp * scale * Math.cos(rad);
+      const py = cy + bsp * scale * Math.sin(rad);
+      const dp = Math.hypot(mx - px, my - py);
+      if (dp < THRESHOLD && dp < bestDist) {
+        bestDist = dp;
+        best = { tws, twa, bsp, side: 'PORT' };
+      }
+    });
+  });
+
+  return best;
+}
+
+canvas.addEventListener('mousemove', e => {
+  const { x, y } = getCanvasPos(e);
+  const pt = hitTest(x, y);
+  if (pt) {
+    hoveredPoint = pt;
+    showTooltip(e, pt);
+  } else {
+    hoveredPoint = null;
+    hideTooltip();
+  }
+  drawPolar();
+});
+
+canvas.addEventListener('mouseleave', () => {
+  hoveredPoint = null;
+  hideTooltip();
+  drawPolar();
+});
+
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const { x, y } = getCanvasPos(e);
+  const pt = hitTest(x, y);
+  if (pt) { hoveredPoint = pt; showTooltip(e, pt); }
+  drawPolar();
+}, { passive: false });
+
+// ─────────────────────────────────────────────
+//  Tooltip
+// ─────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(e, pt) {
+  const { tws, twa, bsp, side } = pt;
+  const color = TWS_COLORS[tws];
+  const vmg = computeVMG(twa, bsp);
+  const isUpwind = twa <= 90;
+
+  document.getElementById('tt-tws').innerHTML =
+    `<span style="color:${color};font-weight:600">TWS ${tws} kn</span> — ${side}`;
+  document.getElementById('tt-twa').textContent = `${twa}°`;
+  document.getElementById('tt-bsp').textContent = `${bsp.toFixed(2)} kn`;
+  document.getElementById('tt-vmg').innerHTML =
+    `<span style="color:${isUpwind ? '#10b981' : '#f97316'}">${Math.abs(vmg).toFixed(2)} kn ${isUpwind ? '▲' : '▼'}</span>`;
+
+  tooltip.classList.add('visible');
+
+  const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+  const y = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+  tooltip.style.left = (x + 16) + 'px';
+  tooltip.style.top  = (y - 20) + 'px';
+}
+
+function hideTooltip() {
+  tooltip.classList.remove('visible');
+}
+
+// ─────────────────────────────────────────────
+//  Wind Speed Buttons
+// ─────────────────────────────────────────────
+function buildWindButtons() {
+  const container = document.getElementById('windBtns');
+  container.innerHTML = '';
+
+  POLAR_DATA.tws.forEach(tws => {
+    const btn = document.createElement('button');
+    btn.className = 'wind-btn' + (activeWS.has(tws) ? ' active' : '');
+    btn.style.setProperty('--ws-color', TWS_COLORS[tws]);
+    if (activeWS.has(tws)) btn.style.borderColor = TWS_COLORS[tws];
+    btn.style.color = activeWS.has(tws) ? TWS_COLORS[tws] : '';
+
+    const swatch = document.createElement('span');
+    swatch.className = 'swatch';
+    swatch.style.background = TWS_COLORS[tws];
+
+    btn.appendChild(swatch);
+    btn.appendChild(document.createTextNode(`${tws} kn`));
+
+    btn.addEventListener('click', () => {
+      if (activeWS.has(tws)) activeWS.delete(tws);
+      else activeWS.add(tws);
+      buildWindButtons();
+      buildVMGTable();
+      drawPolar();
+    });
+
+    container.appendChild(btn);
+  });
+}
+
+document.getElementById('btnAll').addEventListener('click', () => {
+  POLAR_DATA.tws.forEach(tws => activeWS.add(tws));
+  buildWindButtons(); buildVMGTable(); drawPolar();
+});
+
+document.getElementById('btnNone').addEventListener('click', () => {
+  activeWS.clear();
+  buildWindButtons(); buildVMGTable(); drawPolar();
+});
+
+document.getElementById('btnRace').addEventListener('click', () => {
+  activeWS = new Set([8, 10, 12, 16]);
+  buildWindButtons(); buildVMGTable(); drawPolar();
+});
+
+// ─────────────────────────────────────────────
+//  VMG Toggle
+// ─────────────────────────────────────────────
+document.getElementById('vmgToggle').addEventListener('click', function() {
+  showVMG = !showVMG;
+  this.classList.toggle('on', showVMG);
+  drawPolar();
+});
+
+// ─────────────────────────────────────────────
+//  VMG Table
+// ─────────────────────────────────────────────
+function buildVMGTable() {
+  const tbody = document.getElementById('vmgTableBody');
+  tbody.innerHTML = '';
+
+  POLAR_DATA.tws.forEach(tws => {
+    const { beat, run } = getBestVMG(tws);
+    const color = TWS_COLORS[tws];
+    const active = activeWS.has(tws);
+
+    const tr = document.createElement('tr');
+    tr.style.opacity = active ? '1' : '0.35';
+
+    tr.innerHTML = `
+      <td><span style="color:${color};font-weight:600">${tws}kn</span></td>
+      <td class="vmg-angle">${beat.twa}°</td>
+      <td class="vmg-spd">${beat.bsp.toFixed(2)}</td>
+      <td class="vmg-angle">${run.twa}°</td>
+      <td class="vmg-spd">${run.bsp.toFixed(2)}</td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+// ─────────────────────────────────────────────
+//  Resize Handler
+// ─────────────────────────────────────────────
+function onResize() {
+  drawPolar();
+}
+
+const ro = new ResizeObserver(onResize);
+ro.observe(canvas.parentElement);
+
+// ─────────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────────
+buildWindButtons();
+buildVMGTable();
+requestAnimationFrame(drawPolar);
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests.mjs",
+    "test:live": "LIVE_API=1 node tests.mjs",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "jsdom": "^24.1.3"
+  }
+}

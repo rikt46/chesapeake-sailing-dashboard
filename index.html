@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+-->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://gis.charttools.noaa.gov https://unpkg.com; connect-src 'self' https://api.tidesandcurrents.noaa.gov https://api.weather.gov https://data.epa.gov https://mw.buoybay.noaa.gov https://www.ndbc.noaa.gov https://services8.arcgis.com https://*.arcgis.com">
+<title>Tolchester Sailing — Chesapeake Bay Dashboard</title>
+<meta name="description" content="5-day sailing forecast for Tolchester Beach, MD. NOAA tides, wind, weather forecast, and sail recommendations for the Chesapeake Bay.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" integrity="sha384-dug+JxfBvklEQdJ4AYuBBAIScUz0bVN73xpy273gcAwHjb3qI0fXmuYNaNfdyYJG" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link rel="stylesheet" href="./base.css?v=20260324">
+<link rel="stylesheet" href="./style.css?v=20260605">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <svg class="logo" viewBox="0 0 32 32" fill="none" aria-label="Tolchester Sailing Dashboard">
+          <path d="M16 2L16 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M16 4C16 4 28 12 28 18L16 16Z" fill="currentColor" opacity="0.25"/>
+          <path d="M16 6C16 6 26 12 26 17L16 15.5Z" fill="currentColor" opacity="0.6"/>
+          <path d="M6 28C6 28 10 24 16 24C22 24 26 28 26 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+          <path d="M4 30C4 30 8 26 16 26C24 26 28 30 28 30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.25"/>
+        </svg>
+        <div>
+          <h1 class="header-title">Tolchester Sailing</h1>
+          <p class="header-subtitle">Chesapeake Bay &middot; Pearson 31-2</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <label class="refresh-toggle" for="forceRefreshToggle">
+          <input type="checkbox" id="forceRefreshToggle">
+          <span>Force refresh</span>
+        </label>
+        <button class="mode-toggle" id="simpleViewToggle" type="button" aria-pressed="false">Simple view</button>
+        <button class="refresh-btn" id="refreshBtn" aria-label="Refresh data" title="Refresh data">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </button>
+        <span class="update-badge" id="lastUpdate" aria-live="polite">Loading...</span>
+        <span class="update-badge update-badge--secondary" id="sourceUpdate" aria-live="polite" hidden></span>
+        <button data-theme-toggle aria-label="Switch theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Live Now Bar -->
+    <div class="now-bar" id="nowBar">
+      <div class="now-bar-item">
+        <span class="now-bar-label">Wind Now</span>
+        <span class="now-bar-value" id="nowBarWind">&ndash;</span>
+      </div>
+      <div class="now-bar-divider"></div>
+      <div class="now-bar-item">
+        <span class="now-bar-label">Water Temp</span>
+        <span class="now-bar-value" id="nowBarWater">&ndash;</span>
+      </div>
+      <div class="now-bar-divider"></div>
+      <div class="now-bar-item">
+        <span class="now-bar-label">Entrance Depth</span>
+        <span class="now-bar-value" id="nowBarLevel">&ndash;</span>
+      </div>
+      <span class="now-bar-badge">Live</span>
+    </div>
+
+    <section class="source-status" id="sourceStatus" aria-label="Data status" aria-live="polite" hidden>
+      <!-- Intentionally empty: populated by renderSourceStatus() only when ?debugSources is set.
+           Keeping no static text here means a CSS/cache regression can never flash this placeholder. -->
+      <div class="source-status-summary" id="sourceStatusSummary"></div>
+      <div class="source-status-list" id="sourceStatusList"></div>
+    </section>
+
+    <!-- Sail Recommendation Banner -->
+    <section class="recommendation" id="recommendation">
+      <div class="rec-icon" id="recIcon">&#9889;</div>
+      <div class="rec-content">
+        <div class="rec-label" id="recLabel">Sail Recommendation</div>
+        <div class="rec-title" id="recTitle">Calculating...</div>
+        <div class="rec-detail" id="recDetail">Analyzing wind, weather, and tide data</div>
+        <div class="rec-risk" id="recRisk" hidden></div>
+        <div class="rec-meta" id="recMeta"></div>
+      </div>
+    </section>
+
+    <!-- Simple View: bare-bones captain/crew day call -->
+    <section class="simple-summary" id="simpleSummary" aria-label="Simple sailing day summary">
+      <div class="simple-summary-head">
+        <div>
+          <div class="simple-eyebrow">Today&apos;s Call</div>
+          <h2 class="simple-title" id="simpleTitle">Calculating...</h2>
+        </div>
+        <div class="simple-pill" id="simpleDecision">Checking</div>
+      </div>
+      <p class="simple-copy" id="simpleCopy">Waiting for tide and forecast data.</p>
+      <div class="simple-basics" id="simpleBasics"></div>
+    </section>
+
+    <!-- 5-Day Outlook Strip -->
+    <section class="outlook-section" data-full-view-only>
+      <div class="outlook-header">
+        <h2 class="section-title section-title--sm">5-Day Outlook</h2>
+        <p class="outlook-note">Tap a day to update the recommendation, charts, and tide windows below.</p>
+        <div class="outlook-legend" aria-label="Sailing recommendation legend">
+          <span class="legend-item"><span class="legend-swatch legend-swatch--green"></span>Full sail</span>
+          <span class="legend-item"><span class="legend-swatch legend-swatch--yellow"></span>Reduce sail</span>
+          <span class="legend-item"><span class="legend-swatch legend-swatch--amber"></span>Deep reef</span>
+          <span class="legend-item"><span class="legend-swatch legend-swatch--red"></span>No-go</span>
+        </div>
+      </div>
+      <div class="outlook-strip" id="outlookStrip">
+        <!-- filled by JS -->
+      </div>
+    </section>
+
+    <!-- Settings Panel (below outlook so it doesn't interrupt the decision flow) -->
+    <section class="settings-panel" aria-label="Sailing settings" data-full-view-only>
+      <div class="settings-card">
+        <div class="settings-heading">Boat Setup</div>
+        <div class="settings-copy">2 reef points in the main + roller-furling 135% genoa</div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-heading">Crew Mode</div>
+        <div class="settings-toggle-group" id="crewModeButtons">
+          <button type="button" class="settings-toggle" data-crew-mode="solo">Solo</button>
+          <button type="button" class="settings-toggle" data-crew-mode="double">Double</button>
+          <button type="button" class="settings-toggle" data-crew-mode="crewed">Crewed</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-heading">Safety Margin</div>
+        <div class="settings-toggle-group" id="safetyModeButtons">
+          <button type="button" class="settings-toggle" data-safety-mode="standard">Standard</button>
+          <button type="button" class="settings-toggle" data-safety-mode="conservative">Conservative</button>
+        </div>
+      </div>
+      <div class="settings-card settings-card--links">
+        <div class="settings-heading">Reference</div>
+        <div class="settings-links">
+          <a class="settings-link" href="./Pearson%2031-2%20Polar.html" target="_blank" rel="noopener"
+             title="Interactive polar with Live Mode — overlays current NWS wind and NOAA tide/current on the Pearson 31-2 speed polar.">
+            <span class="settings-link-label">Live Polar</span>
+            <span class="settings-link-desc">Live wind &amp; tide overlaid on your speed polar.</span>
+          </a>
+          <a class="settings-link" href="./Pearson%2031-2%20Polar%20Reference%20Sheet/index.html" target="_blank" rel="noopener"
+             title="One-page Pearson 31-2 speed polar reference — target boat speeds by wind angle/speed, best beat/run VMG angles, and full vessel specs; print-ready.">
+            <span class="settings-link-label">Polar Sheet</span>
+            <span class="settings-link-desc">Speed targets, VMG angles &amp; specs on one page.</span>
+          </a>
+          <a class="settings-link" href="./Pearson%2031-2%20Speed%20Polar%20Diagram/index.html" target="_blank" rel="noopener"
+             title="Interactive speed polar diagram for the Pearson 31-2 — hover any true wind angle and wind speed to read target boat speed off the radial plot.">
+            <span class="settings-link-label">Polar Diagram</span>
+            <span class="settings-link-desc">Interactive radial plot — speed at every wind angle.</span>
+          </a>
+          <a class="settings-link" href="./Pearson%2031-2%20%E2%80%94%20Speed%20Polar%20Reference%20Sheet.pdf" target="_blank" rel="noopener"
+             title="Printable, full-resolution speed-polar reference sheet (specs, VMG angles, boat-speed grid, polar diagram) to download or print for the chart table when offline.">
+            <span class="settings-link-label">Printable PDF</span>
+            <span class="settings-link-desc">Print/offline full-res sheet for the nav station.</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Briefing Row: Day Rating · Best Window · What Changed -->
+    <section class="briefing-row" aria-label="Selected day briefing" data-full-view-only>
+      <div class="briefing-card">
+        <div class="briefing-label">Day Rating</div>
+        <div class="briefing-value" id="briefingRating">Calculating...</div>
+        <div class="briefing-note" id="briefingRatingNote">Readiness pending</div>
+      </div>
+      <div class="briefing-card">
+        <div class="briefing-label">Best Window</div>
+        <div class="briefing-value" id="briefingWindow">Checking tides...</div>
+        <div class="briefing-note" id="briefingWindowNote">Using current tide window guidance</div>
+      </div>
+      <div class="briefing-card">
+        <div class="briefing-label">What Changed</div>
+        <div class="briefing-value" id="briefingChange">Selecting baseline...</div>
+        <div class="briefing-note" id="briefingChangeNote">Compared with today</div>
+      </div>
+    </section>
+
+    <!-- Pre-departure Checklist / Float Plan -->
+    <section class="float-plan-panel" aria-label="Pre-departure checklist and float plan" data-full-view-only>
+      <div class="float-plan-header">
+        <div>
+          <h2 class="section-title section-title--sm">Pre-Departure</h2>
+          <p class="float-plan-note">Crew, boat, and shore-contact readiness before leaving Tolchester.</p>
+        </div>
+        <div class="float-plan-status" id="floatPlanStatus">Not ready</div>
+      </div>
+
+      <div class="float-plan-grid">
+        <label class="float-plan-field" for="floatCrewCount">
+          <span>Crew count</span>
+          <input type="number" id="floatCrewCount" min="1" max="12" inputmode="numeric" value="2">
+        </label>
+        <label class="float-plan-field" for="floatReturnTime">
+          <span>Expected return</span>
+          <input type="time" id="floatReturnTime">
+        </label>
+        <label class="float-plan-field float-plan-field--wide" for="floatShoreContact">
+          <span>Shore contact</span>
+          <input type="text" id="floatShoreContact" placeholder="Name / phone">
+        </label>
+      </div>
+
+      <div class="float-check-grid" id="floatChecklist">
+        <label class="float-check"><input type="checkbox" data-float-check="pfds"><span>PFDs / harnesses ready</span></label>
+        <label class="float-check"><input type="checkbox" data-float-check="vhf"><span>VHF / DSC checked</span></label>
+        <label class="float-check"><input type="checkbox" data-float-check="engine"><span>Fuel, engine, and battery checked</span></label>
+        <label class="float-check"><input type="checkbox" data-float-check="reefing"><span>Reefing plan briefed</span></label>
+        <label class="float-check"><input type="checkbox" data-float-check="shore"><span>Float plan shared ashore</span></label>
+      </div>
+
+      <div class="float-plan-footer">
+        <div class="float-plan-summary" id="floatPlanSummary">Complete the essentials before departure.</div>
+        <button type="button" class="float-plan-reset" id="floatPlanReset">Reset</button>
+      </div>
+    </section>
+
+    <!-- Current Prediction: official NOAA current prediction where available -->
+    <section class="current-row" aria-label="NOAA current prediction" data-full-view-only>
+      <div class="current-card">
+        <div class="current-label">Current Station</div>
+        <div class="current-value" id="currentStation">Brewerton Ch Ext LB 2BE</div>
+        <div class="current-note" id="currentSource">NOAA cb1202 prediction</div>
+      </div>
+      <div class="current-card" id="currentPhaseCard">
+        <div class="current-label">Current Phase</div>
+        <div class="current-value" id="currentPhase">Checking...</div>
+        <div class="current-note" id="currentPhaseNote">Using NOAA max/slack events</div>
+      </div>
+      <div class="current-card">
+        <div class="current-label">Next Turn</div>
+        <div class="current-value" id="currentNextTurn">--</div>
+        <div class="current-note" id="currentNextTurnNote">slack / max current timing</div>
+      </div>
+      <div class="current-card" id="currentOppositionCard">
+        <div class="current-label">Wind vs Current</div>
+        <div class="current-value" id="currentOpposition">--</div>
+        <div class="current-note" id="currentOppositionNote">selected sailing day</div>
+      </div>
+    </section>
+
+    <!-- Bay Buoy Check: live Chesapeake observation sanity check -->
+    <section class="buoy-row" aria-label="Live Chesapeake Bay buoy check" data-full-view-only>
+      <div class="buoy-card">
+        <div class="buoy-label">Bay Buoy</div>
+        <div class="buoy-value" id="buoyStation">Annapolis</div>
+        <div class="buoy-note" id="buoySource">NOAA CBIBS / NDBC</div>
+      </div>
+      <div class="buoy-card" id="buoyWindCard">
+        <div class="buoy-label">Buoy Wind</div>
+        <div class="buoy-value" id="buoyWind">Checking...</div>
+        <div class="buoy-note" id="buoyWindNote">live bay exposure</div>
+      </div>
+      <div class="buoy-card" id="buoyWaveCard">
+        <div class="buoy-label">Observed Waves</div>
+        <div class="buoy-value" id="buoyWaves">--</div>
+        <div class="buoy-note" id="buoyWaveNote">significant height / period</div>
+      </div>
+      <div class="buoy-card" id="buoyRealityCard">
+        <div class="buoy-label">Reality Check</div>
+        <div class="buoy-value" id="buoyReality">--</div>
+        <div class="buoy-note" id="buoyRealityNote">compare with forecast before casting off</div>
+      </div>
+    </section>
+
+    <!-- KPI Row: Wind · Gusts · Air Temp · Boat Speed -->
+    <section class="kpi-row" data-full-view-only>
+      <div class="kpi-card">
+        <div class="kpi-label">Wind</div>
+        <div class="kpi-value" id="kpiWind">--</div>
+        <div class="kpi-unit">kts</div>
+        <div class="kpi-sub" id="kpiWindDir">--</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Gusts</div>
+        <div class="kpi-value" id="kpiGust">--</div>
+        <div class="kpi-unit">kts</div>
+        <div class="kpi-sub" id="kpiGustNote">est. from sustained wind</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Air Temp</div>
+        <div class="kpi-value" id="kpiAirTemp">--</div>
+        <div class="kpi-unit">&deg;F</div>
+        <div class="kpi-sub" id="kpiAirTempRange">&nbsp;</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Boat Speed</div>
+        <div class="kpi-value" id="kpiBsp">--</div>
+        <div class="kpi-unit">kts est.</div>
+        <div class="kpi-sub" id="kpiBspNote">from polars</div>
+      </div>
+    </section>
+
+    <!-- Marine Conditions: NWS zone forecast waves and visibility -->
+    <section class="marine-row" aria-label="Marine zone conditions" data-full-view-only>
+      <div class="marine-card">
+        <div class="marine-label">Marine Zone</div>
+        <div class="marine-value" id="marineZone">--</div>
+        <div class="marine-note" id="marinePeriod">NWS zone forecast</div>
+      </div>
+      <div class="marine-card">
+        <div class="marine-label">Waves</div>
+        <div class="marine-value" id="marineWaves">--</div>
+        <div class="marine-note">from marine forecast text</div>
+      </div>
+      <div class="marine-card">
+        <div class="marine-label">Visibility</div>
+        <div class="marine-value" id="marineVisibility">--</div>
+        <div class="marine-note" id="marineVisibilityNote">from marine forecast text</div>
+      </div>
+      <div class="marine-card" id="uvCard">
+        <div class="marine-label">UV Index</div>
+        <div class="marine-value" id="uvIndex">--</div>
+        <div class="marine-note" id="uvNote">EPA forecast</div>
+      </div>
+      <div class="marine-card marine-card--wide">
+        <div class="marine-label">Marine Summary</div>
+        <div class="marine-summary" id="marineSummary">Waiting for NWS marine forecast...</div>
+      </div>
+    </section>
+
+    <!-- Storm Watch: thunder, squall, radar, and lightning awareness -->
+    <section class="storm-row" aria-label="Storm and squall awareness" data-full-view-only>
+      <div class="storm-card" id="stormStatusCard">
+        <div class="storm-label">Storm Watch</div>
+        <div class="storm-value" id="stormStatus">Checking...</div>
+        <div class="storm-note" id="stormStatusNote">NWS hourly and marine alerts</div>
+      </div>
+      <div class="storm-card">
+        <div class="storm-label">Thunder / Lightning</div>
+        <div class="storm-value" id="stormThunder">--</div>
+        <div class="storm-note" id="stormThunderNote">from NWS wording</div>
+      </div>
+      <div class="storm-card">
+        <div class="storm-label">Squall Alerts</div>
+        <div class="storm-value" id="stormAlert">--</div>
+        <div class="storm-note" id="stormAlertNote">active marine warnings</div>
+      </div>
+      <div class="storm-card storm-card--links">
+        <div class="storm-label">Radar</div>
+        <div class="storm-link-row">
+          <a class="storm-link" href="https://radar.weather.gov/" target="_blank" rel="noopener noreferrer">NWS Radar</a>
+          <a class="storm-link" href="https://nowcoast.noaa.gov/" target="_blank" rel="noopener noreferrer">nowCOAST</a>
+        </div>
+        <div class="storm-note">radar, warnings, satellite, lightning density</div>
+      </div>
+    </section>
+
+    <!-- Charts Row -->
+    <section class="charts-row" data-full-view-only>
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">Hourly Wind &amp; Gusts</h2>
+          <span class="chart-source">weather.gov</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="windChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">Tide Predictions</h2>
+          <span class="chart-source">NOAA 8573364</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="tideChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tide & Depth: Keel Clearance + Tide Schedule (merged) -->
+    <section class="tide-depth-section" data-full-view-only>
+      <h2 class="section-title">Keel Clearance &amp; Tide Schedule</h2>
+      <div id="depthWindows">
+        <div class="depth-status depth-safe">
+          <span class="depth-icon">&#9875;</span>
+          <div>
+            <div class="depth-title">Checking depth restrictions&hellip;</div>
+          </div>
+        </div>
+      </div>
+      <div class="tide-table-wrap">
+        <table class="tide-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Height</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="tideTableBody">
+            <!-- filled by JS -->
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">Keel clearance: 5.8 ft draft + 6.4&Prime; safety = 6.33 ft minimum &middot; 5.5 ft charted depth (MLLW) &middot; NOAA Station 8573364 &middot; Tolchester Beach</p>
+    </section>
+
+    <!-- Nautical Chart — ~5NM view of the Tolchester sailing area -->
+    <section class="chart-section" data-full-view-only>
+      <h2 class="section-title">Sailing Area</h2>
+      <div class="chart-map-wrap">
+        <div id="nauticalMap" class="nautical-map"></div>
+      </div>
+      <p class="chart-attribution">
+        Chart: NOAA MarineChart Services &mdash; locally cached tiles with NOAA live fallback
+      </p>
+    </section>
+
+    <!-- Local Notice to Mariners -->
+    <section id="ntmSection" class="ntm-section" hidden data-full-view-only>
+      <h2 class="section-title">Local Notice to Mariners</h2>
+      <div id="ntmContent" class="ntm-content">
+        <!-- filled by JS -->
+      </div>
+      <p class="chart-attribution">USCG Maritime Safety Information &bull; Chesapeake Bay only, filtered to roughly 20 NM around Tolchester Beach</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Data: NOAA 8573364 (Tolchester Beach) &middot; NWS PHI Grid 17,37 &middot; Forecast window: Today + 4 days</p>
+    <p>Recommendations are advisory only &mdash; always verify conditions before departure.</p>
+  </footer>
+
+  <script type="module" src="./app.js?v=20260605"></script>
+</body>
+</html>

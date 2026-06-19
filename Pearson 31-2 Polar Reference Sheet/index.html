@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearson 31-2 — Speed Polar Reference Sheet</title>
+  <style>
+    /* ── Screen styles ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 11pt;
+      color: #111;
+      background: #f5f5f0;
+      padding: 20px;
+    }
+
+    .page {
+      background: #fff;
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 0.55in 0.6in 0.5in;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+    }
+
+    /* ── Print button ── */
+    .print-btn {
+      display: block;
+      margin: 0 auto 18px;
+      max-width: 8.5in;
+      padding: 8px 20px;
+      background: #1a3a5c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+    }
+    .print-btn:hover { background: #24527a; }
+    .dashboard-link {
+      display: block;
+      margin: 0 auto 10px;
+      max-width: 8.5in;
+      padding: 8px 20px;
+      background: #244f76;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+    }
+    .dashboard-link:hover { background: #2f628f; }
+
+    /* ── Header ── */
+    .doc-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 2.5px solid #1a3a5c;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+
+    .doc-title h1 {
+      font-size: 22pt;
+      font-weight: bold;
+      color: #1a3a5c;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+
+    .doc-title .subtitle {
+      font-size: 9.5pt;
+      color: #555;
+      margin-top: 3px;
+      font-style: italic;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Sailboat SVG logo in header */
+    .header-logo {
+      flex-shrink: 0;
+      opacity: 0.85;
+    }
+
+    /* ── Two-column layout ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-family: Arial, sans-serif;
+      font-size: 7.5pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #1a3a5c;
+      border-bottom: 1px solid #1a3a5c;
+      padding-bottom: 2px;
+      margin-bottom: 8px;
+    }
+
+    /* ── Specs table ── */
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+      font-family: Arial, sans-serif;
+    }
+
+    .specs-table td {
+      padding: 2.5px 0;
+      vertical-align: top;
+    }
+
+    .specs-table td:first-child {
+      color: #555;
+      width: 50%;
+      padding-right: 6px;
+    }
+
+    .specs-table td:last-child {
+      font-weight: 600;
+      color: #111;
+    }
+
+    .specs-table tr:nth-child(even) td {
+      background: #f8f8f6;
+    }
+
+    /* ── Main polar table ── */
+    .polar-wrap {
+      margin-bottom: 16px;
+    }
+
+    .polar-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      font-family: Arial, 'Helvetica Neue', sans-serif;
+    }
+
+    .polar-table thead tr th {
+      background: #1a3a5c;
+      color: #fff;
+      text-align: center;
+      padding: 5px 6px;
+      font-weight: 600;
+      font-size: 9pt;
+      white-space: nowrap;
+    }
+
+    .polar-table thead tr th:first-child {
+      text-align: left;
+      padding-left: 8px;
+    }
+
+    .polar-table tbody tr td {
+      text-align: center;
+      padding: 4px 6px;
+      border-bottom: 1px solid #e8e8e4;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .polar-table tbody tr td:first-child {
+      text-align: left;
+      padding-left: 8px;
+      font-weight: 600;
+      color: #1a3a5c;
+      white-space: nowrap;
+      background: #f0f4f8;
+      border-right: 1.5px solid #c8d4e0;
+    }
+
+    .polar-table tbody tr:nth-child(even) td:not(:first-child) {
+      background: #f8f8f6;
+    }
+
+    /* Highlight hull-speed-ish cells */
+    .hs { color: #1a3a5c; font-weight: 700; }
+    .near-hs { color: #2a5a8c; font-weight: 600; }
+
+    /* ── VMG table ── */
+    .vmg-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+      font-family: Arial, sans-serif;
+    }
+
+    .vmg-table thead th {
+      background: #1a3a5c;
+      color: #fff;
+      padding: 4px 6px;
+      font-size: 8.5pt;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .vmg-table thead th:first-child { text-align: left; padding-left: 8px; }
+
+    .vmg-table tbody td {
+      padding: 3.5px 6px;
+      border-bottom: 1px solid #e8e8e4;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vmg-table tbody td:first-child {
+      text-align: left;
+      padding-left: 8px;
+      font-weight: 700;
+      background: #f0f4f8;
+      border-right: 1.5px solid #c8d4e0;
+    }
+
+    .vmg-table tbody tr:nth-child(even) td:not(:first-child) { background: #f8f8f6; }
+
+    .beat-col { color: #1a7a3c; }
+    .run-col  { color: #a03020; }
+
+    /* ── Polar Diagram ── */
+    .diagram-wrap {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    #polarSvg {
+      width: 100%;
+      max-width: 6.8in;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── Notes ── */
+    .notes {
+      font-family: Arial, sans-serif;
+      font-size: 7.5pt;
+      color: #666;
+      line-height: 1.5;
+      border-top: 1px solid #ddd;
+      padding-top: 7px;
+      margin-top: 2px;
+    }
+
+    .notes strong { color: #444; }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      font-family: Arial, sans-serif;
+      font-size: 8pt;
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-swatch {
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .print-btn { display: none; }
+      .dashboard-link { display: none; }
+      .page {
+        box-shadow: none;
+        margin: 0;
+        padding: 0.45in 0.5in 0.4in;
+        max-width: 100%;
+      }
+
+      @page {
+        size: letter portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<a class="dashboard-link" href="../index.html">← Back to Dashboard</a>
+<button class="print-btn" onclick="window.print()">⎙ Print / Save as PDF</button>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-title">
+      <h1>Pearson 31-2 &nbsp; Speed Polar Reference</h1>
+      <div class="subtitle">Masthead Sloop &nbsp;·&nbsp; 1987–1991 &nbsp;·&nbsp; Designer: William Shaw / W.G. Richards &nbsp;·&nbsp; PHRF 156–165</div>
+    </div>
+    <svg class="header-logo" width="52" height="52" viewBox="0 0 52 52" fill="none" aria-label="Sailboat">
+      <path d="M10 42 Q26 46 42 42 L40 44 Q26 49 12 44 Z" fill="#1a3a5c"/>
+      <line x1="26" y1="42" x2="26" y2="6" stroke="#1a3a5c" stroke-width="1.5"/>
+      <path d="M26 8 L26 42 L40 37 Z" fill="#1a3a5c" opacity="0.7"/>
+      <path d="M26 15 L26 42 L15 39 Z" fill="#1a3a5c" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- Specs + VMG side by side -->
+  <div class="two-col">
+
+    <!-- Vessel Specs -->
+    <div>
+      <div class="section-title">Vessel Specifications</div>
+      <table class="specs-table">
+        <tr><td>LOA</td><td>30.67 ft (9.35 m)</td></tr>
+        <tr><td>LWL</td><td>25.42 ft (7.75 m)</td></tr>
+        <tr><td>Beam</td><td>10.67 ft (3.25 m)</td></tr>
+        <tr><td>Draft (std / shoal)</td><td>5.80 ft / 4.0 ft</td></tr>
+        <tr><td>Displacement</td><td>10,000 lb (4,536 kg)</td></tr>
+        <tr><td>Ballast / Ratio</td><td>3,800 lb &nbsp;·&nbsp; 38%</td></tr>
+        <tr><td>Sail Area (total)</td><td>492.8 ft²</td></tr>
+        <tr><td>Mainsail (P × E)</td><td>36.8 × 12.0 ft &nbsp;·&nbsp; 220.8 ft²</td></tr>
+        <tr><td>Foretriangle (I × J)</td><td>42.5 × 12.8 ft &nbsp;·&nbsp; 272.0 ft²</td></tr>
+        <tr><td>SA/D ratio</td><td>17.05</td></tr>
+        <tr><td>Disp/Length ratio</td><td>271.8</td></tr>
+        <tr><td>Comfort ratio</td><td>24.45</td></tr>
+        <tr><td>Capsize screen (CSF)</td><td>1.98</td></tr>
+        <tr><td>Hull Speed</td><td><strong>6.76 kn</strong></td></tr>
+        <tr><td>PHRF (avg)</td><td>156 – 165 s/nm</td></tr>
+      </table>
+    </div>
+
+    <!-- VMG Optimum Angles -->
+    <div>
+      <div class="section-title">VMG Optimum Angles &amp; Target Speeds</div>
+      <table class="vmg-table">
+        <thead>
+          <tr>
+            <th>TWS</th>
+            <th class="beat-col">Beat °</th>
+            <th class="beat-col">BSP↑</th>
+            <th class="beat-col">VMG↑</th>
+            <th class="run-col">Run °</th>
+            <th class="run-col">BSP↓</th>
+            <th class="run-col">VMG↓</th>
+          </tr>
+        </thead>
+        <tbody id="vmgBody"></tbody>
+      </table>
+      <div style="font-family:Arial;font-size:7.5pt;color:#666;margin-top:6px;line-height:1.5;">
+        <strong>Beat/Run °</strong> = True wind angle from dead upwind/downwind at best VMG.<br>
+        <strong>BSP</strong> = Boat speed (kn) at that angle. &nbsp;<strong>VMG</strong> = Velocity made good (kn).
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Polar Speed Table -->
+  <div class="polar-wrap">
+    <div class="section-title">Boat Speed (knots) by True Wind Angle &amp; True Wind Speed</div>
+    <table class="polar-table">
+      <thead>
+        <tr>
+          <th>TWA →<br>TWS ↓</th>
+          <th>52°<br><span style="font-weight:400;font-size:8pt">Close-hauled</span></th>
+          <th>60°</th>
+          <th>75°</th>
+          <th>90°<br><span style="font-weight:400;font-size:8pt">Beam</span></th>
+          <th>110°</th>
+          <th>120°</th>
+          <th>135°</th>
+          <th>150°<br><span style="font-weight:400;font-size:8pt">Broad reach</span></th>
+        </tr>
+      </thead>
+      <tbody id="polarBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Polar Diagram -->
+  <div class="diagram-wrap">
+    <div class="section-title">Speed Polar Diagram — All Wind Speeds</div>
+    <div class="legend" id="legend"></div>
+    <svg id="polarSvg" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <!-- Notes -->
+  <div class="notes">
+    <strong>Data source &amp; methodology:</strong> No official VPP data exists for the Pearson 31-2. These polars were computed by scaling the Pearson 33 reference polar (Seapilot polar database) using hull speed ratio (√LWL₃₁₋₂/√LWL₃₃ = 0.970), SA/D, and displacement ratios with angle-dependent weighting. &nbsp;
+    <strong>Indicative performance only</strong> — actual speeds vary with sail trim, sea state, crew weight, canvas selection, and bottom condition. Upwind angles assume working jib; downwind angles assume poled-out headsail or reacher.
+    &nbsp;·&nbsp; Spec data: <em>sailboatdata.com/sailboat/pearson-31-2</em>
+    &nbsp;·&nbsp; Created with Perplexity Computer — perplexity.ai/computer
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ── Data ──────────────────────────────────────────
+const TWA  = [52, 60, 75, 90, 110, 120, 135, 150];
+const TWS  = [6, 8, 10, 12, 14, 16, 20];
+const DATA = {
+  6:  [4.66, 4.97, 5.19, 5.39, 5.05, 4.86, 4.28, 3.60],
+  8:  [5.58, 5.88, 5.98, 6.18, 5.93, 5.73, 5.25, 4.57],
+  10: [6.08, 6.39, 6.48, 6.68, 6.51, 6.31, 6.03, 5.35],
+  12: [6.29, 6.59, 6.78, 6.88, 6.80, 6.80, 6.51, 6.03],
+  14: [6.35, 6.55, 6.98, 7.08, 7.09, 7.09, 6.90, 6.42],
+  16: [6.45, 6.65, 7.08, 7.28, 7.29, 7.38, 7.19, 6.80],
+  20: [6.55, 6.75, 7.18, 7.48, 7.48, 7.77, 7.78, 7.49]
+};
+const HULL_SPEED = 6.76;
+
+// Colors — print-safe, distinct in B&W too
+const COLORS = {
+  6:  '#2563eb',
+  8:  '#0891b2',
+  10: '#059669',
+  12: '#65a30d',
+  14: '#ca8a04',
+  16: '#ea580c',
+  20: '#dc2626'
+};
+
+const DASHES = {
+  6:  '8,4',
+  8:  '6,3',
+  10: '4,2',
+  12: '',
+  14: '3,3',
+  16: '',
+  20: '2,2'
+};
+
+// ── VMG ──────────────────────────────────────────
+function vmg(twa, bsp) { return bsp * Math.cos(twa * Math.PI / 180); }
+
+function bestVMG(tws) {
+  const spds = DATA[tws];
+  let beat = { vmg: 0, twa: 0, bsp: 0 };
+  let run  = { vmg: 0, twa: 0, bsp: 0 };
+  TWA.forEach((a, i) => {
+    const v = vmg(a, spds[i]);
+    if (a <= 90 && v > beat.vmg) beat = { vmg: v, twa: a, bsp: spds[i] };
+    if (a > 90  && Math.abs(v) > run.vmg) run = { vmg: Math.abs(v), twa: a, bsp: spds[i] };
+  });
+  return { beat, run };
+}
+
+// ── Build VMG table ──────────────────────────────
+(function buildVMG() {
+  const tbody = document.getElementById('vmgBody');
+  TWS.forEach(tws => {
+    const { beat, run } = bestVMG(tws);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${tws} kn</td>
+      <td class="beat-col">${beat.twa}°</td>
+      <td class="beat-col">${beat.bsp.toFixed(2)}</td>
+      <td class="beat-col">${beat.vmg.toFixed(2)}</td>
+      <td class="run-col">${run.twa}°</td>
+      <td class="run-col">${run.bsp.toFixed(2)}</td>
+      <td class="run-col">${run.vmg.toFixed(2)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+})();
+
+// ── Build speed table ────────────────────────────
+(function buildTable() {
+  const tbody = document.getElementById('polarBody');
+  TWS.forEach(tws => {
+    const spds = DATA[tws];
+    const tr = document.createElement('tr');
+    let cells = `<td>${tws} kn</td>`;
+    spds.forEach(s => {
+      let cls = '';
+      if (s >= HULL_SPEED) cls = 'hs';
+      else if (s >= HULL_SPEED - 0.3) cls = 'near-hs';
+      cells += `<td class="${cls}">${s.toFixed(2)}</td>`;
+    });
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+})();
+
+// ── Build polar SVG ──────────────────────────────
+(function buildSVG() {
+  const svg = document.getElementById('polarSvg');
+  const W = 680, H = 400;
+  const cx = W / 2, cy = H - 28;
+  const MAX_R = 8.5;
+  const scale = (H - 55) / MAX_R;
+
+  function toXY(twa, bsp, mirror) {
+    const rad = (twa - 90) * Math.PI / 180;
+    const r = bsp * scale;
+    const x = mirror ? cx - r * Math.cos(rad) : cx + r * Math.cos(rad);
+    const y = cy + r * Math.sin(rad);
+    return [x, y];
+  }
+
+  function el(tag, attrs, text) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (text) e.textContent = text;
+    return e;
+  }
+
+  // ── Grid rings ──
+  [2, 3, 4, 5, 6, 7, 8].forEach(spd => {
+    const r = spd * scale;
+    // Semicircle path (top half only)
+    const path = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+    const isHS = Math.abs(spd - HULL_SPEED) < 0.5;
+    svg.appendChild(el('path', {
+      d: path,
+      fill: 'none',
+      stroke: isHS ? '#1a3a5c' : '#ccc',
+      'stroke-width': isHS ? '1.2' : '0.6',
+      'stroke-dasharray': isHS ? '5,3' : ''
+    }));
+    // Speed label
+    svg.appendChild(el('text', {
+      x: cx + 3,
+      y: cy - r + 11,
+      fill: isHS ? '#1a3a5c' : '#999',
+      'font-size': '8',
+      'font-family': 'Arial',
+      'font-weight': isHS ? '700' : '400'
+    }, isHS ? `${spd}kn ≈HS` : `${spd}kn`));
+  });
+
+  // ── Angle grid lines ──
+  const gridAngles = [52, 60, 75, 90, 110, 120, 135, 150, 180];
+  gridAngles.forEach(twa => {
+    const [x, y] = toXY(twa, MAX_R + 0.6, false);
+    svg.appendChild(el('line', {
+      x1: cx, y1: cy, x2: x, y2: y,
+      stroke: '#ddd', 'stroke-width': '0.5', 'stroke-dasharray': '3,3'
+    }));
+    const [mx, my] = toXY(twa, MAX_R + 0.6, true);
+    svg.appendChild(el('line', {
+      x1: cx, y1: cy, x2: mx, y2: my,
+      stroke: '#ddd', 'stroke-width': '0.5', 'stroke-dasharray': '3,3'
+    }));
+
+    // Labels (right side = starboard)
+    if (twa !== 180) {
+      const [lx, ly] = toXY(twa, MAX_R + 1.0, false);
+      svg.appendChild(el('text', {
+        x: lx + 2, y: ly + 3,
+        fill: '#888', 'font-size': '8', 'font-family': 'Arial',
+        'text-anchor': twa > 90 ? 'start' : 'end'
+      }, twa + '°'));
+    }
+  });
+
+  // Vertical axis
+  svg.appendChild(el('line', {
+    x1: cx, y1: cy - MAX_R * scale - 10,
+    x2: cx, y2: cy,
+    stroke: '#bbb', 'stroke-width': '0.8'
+  }));
+
+  // 0° label
+  svg.appendChild(el('text', {
+    x: cx, y: cy - MAX_R * scale - 12,
+    fill: '#666', 'font-size': '8', 'font-family': 'Arial', 'text-anchor': 'middle'
+  }, '0° Wind'));
+
+  // PORT / STBD labels
+  svg.appendChild(el('text', {
+    x: cx - MAX_R * scale * 0.75, y: cy + 14,
+    fill: '#aaa', 'font-size': '7.5', 'font-family': 'Arial', 'text-anchor': 'middle', 'font-style': 'italic'
+  }, 'PORT'));
+  svg.appendChild(el('text', {
+    x: cx + MAX_R * scale * 0.75, y: cy + 14,
+    fill: '#aaa', 'font-size': '7.5', 'font-family': 'Arial', 'text-anchor': 'middle', 'font-style': 'italic'
+  }, 'STBD'));
+
+  // ── Draw curves ──
+  TWS.forEach(tws => {
+    const spds = DATA[tws];
+    const color = COLORS[tws];
+    const dash = DASHES[tws];
+
+    // Interpolate for smooth curve
+    function interpBSP(twaVal) {
+      for (let i = 0; i < TWA.length - 1; i++) {
+        if (twaVal >= TWA[i] && twaVal <= TWA[i+1]) {
+          const t = (twaVal - TWA[i]) / (TWA[i+1] - TWA[i]);
+          return spds[i] + t * (spds[i+1] - spds[i]);
+        }
+      }
+      return spds[spds.length - 1];
+    }
+
+    // Build path points for starboard
+    const stbdPts = [];
+    const portPts = [];
+    for (let deg = TWA[0]; deg <= TWA[TWA.length-1]; deg += 1) {
+      const bsp = interpBSP(deg);
+      stbdPts.push(toXY(deg, bsp, false));
+      portPts.push(toXY(deg, bsp, true));
+    }
+
+    function pathFromPts(pts) {
+      return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+    }
+
+    // Starboard — solid
+    svg.appendChild(el('path', {
+      d: pathFromPts(stbdPts),
+      fill: 'none', stroke: color,
+      'stroke-width': '1.6',
+      'stroke-dasharray': dash,
+      'stroke-linecap': 'round',
+      opacity: '0.9'
+    }));
+
+    // Port — same style but lighter
+    svg.appendChild(el('path', {
+      d: pathFromPts(portPts),
+      fill: 'none', stroke: color,
+      'stroke-width': '1.2',
+      'stroke-dasharray': dash,
+      'stroke-linecap': 'round',
+      opacity: '0.5'
+    }));
+
+    // Data point dots — starboard only
+    TWA.forEach((twa, i) => {
+      const [x, y] = toXY(twa, spds[i], false);
+      svg.appendChild(el('circle', { cx: x, cy: y, r: '2.2', fill: color }));
+    });
+
+    // TWS label at the rightmost reach point (90°)
+    const [lx, ly] = toXY(90, spds[TWA.indexOf(90)], false);
+    svg.appendChild(el('text', {
+      x: lx + 5, y: ly + 3,
+      fill: color, 'font-size': '7.5', 'font-family': 'Arial', 'font-weight': '700'
+    }, tws + 'kn'));
+  });
+
+  // ── VMG markers (triangles at beat/run angles) ──
+  TWS.forEach(tws => {
+    const { beat, run } = bestVMG(tws);
+    const color = COLORS[tws];
+
+    // Beat marker — small upward triangle
+    const [bx, by] = toXY(beat.twa, beat.bsp, false);
+    svg.appendChild(el('polygon', {
+      points: `${bx},${by-6} ${bx-4},${by+1} ${bx+4},${by+1}`,
+      fill: color, opacity: '0.6'
+    }));
+
+    // Run marker — small downward triangle
+    const [rx, ry] = toXY(run.twa, run.bsp, false);
+    svg.appendChild(el('polygon', {
+      points: `${rx},${ry+6} ${rx-4},${ry-1} ${rx+4},${ry-1}`,
+      fill: color, opacity: '0.6'
+    }));
+  });
+
+  // ── Legend ──
+  const legendEl = document.getElementById('legend');
+  TWS.forEach(tws => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 6;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = COLORS[tws];
+    ctx.lineWidth = 2.5;
+    if (DASHES[tws]) {
+      const parts = DASHES[tws].split(',').map(Number);
+      ctx.setLineDash(parts);
+    }
+    ctx.beginPath();
+    ctx.moveTo(0, 3);
+    ctx.lineTo(32, 3);
+    ctx.stroke();
+    canvas.style.width = '32px';
+    canvas.style.height = '6px';
+
+    const label = document.createElement('span');
+    label.textContent = `${tws} kn`;
+    label.style.fontFamily = 'Arial';
+    label.style.fontSize = '8pt';
+    label.style.color = COLORS[tws];
+    label.style.fontWeight = '600';
+
+    item.appendChild(canvas);
+    item.appendChild(label);
+    legendEl.appendChild(item);
+  });
+
+  // Legend guide for markers
+  const mitem = document.createElement('div');
+  mitem.className = 'legend-item';
+  mitem.style.marginLeft = '6px';
+  mitem.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14"><polygon points="7,1 3,10 11,10" fill="#555" opacity="0.6"/></svg><span style="font-family:Arial;font-size:8pt;color:#555"> Best beat VMG</span>`;
+  legendEl.appendChild(mitem);
+
+  const mitem2 = document.createElement('div');
+  mitem2.className = 'legend-item';
+  mitem2.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14"><polygon points="7,13 3,4 11,4" fill="#555" opacity="0.6"/></svg><span style="font-family:Arial;font-size:8pt;color:#555"> Best run VMG</span>`;
+  legendEl.appendChild(mitem2);
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pearson 31-2 · Hull 117 · Speed Polar — 135% Genoa + Main</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080d18;--surface:#0e1729;--surface2:#162035;
+      --border:#1e2d47;--text:#e8edf5;--muted:#6b7fa0;--accent:#3b82f6;
+    }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:13px}
+    /* Layout */
+    .app{display:grid;grid-template-rows:auto 1fr;height:100vh;overflow:hidden}
+    .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .topbar-left{display:flex;align-items:center;gap:12px}
+    .logo{width:34px;height:34px;flex-shrink:0}
+    .boat-name{font-size:17px;font-weight:700;color:#e8edf5;letter-spacing:-.02em}
+    .boat-sub{font-size:11px;color:var(--muted);margin-top:1px}
+    .badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .bdg{display:inline-block;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;border:1px solid;white-space:nowrap;letter-spacing:.02em}
+    .bdg-blue{color:#93c5fd;border-color:#1e40af;background:#0f1f3d}
+    .bdg-green{color:#6ee7b7;border-color:#065f46;background:#0a1f17}
+    .bdg-amber{color:#fcd34d;border-color:#92400e;background:#1c1000}
+    .dashboard-link{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;border:1px solid #2563eb;background:#0d1d3f;color:#bfdbfe;font-size:10px;font-weight:700;letter-spacing:.02em;text-decoration:none;white-space:nowrap}
+    .dashboard-link:hover{border-color:#3b82f6;color:#dbeafe}
+    /* Main content */
+    .main{display:grid;grid-template-columns:1fr 260px;overflow:hidden}
+    .canvas-wrap{position:relative;overflow:hidden;background:var(--bg)}
+    canvas{display:block;width:100%;height:100%}
+    /* Sidebar */
+    .sidebar{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:14px}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .sec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:4px;margin-bottom:8px}
+    /* Sail config box */
+    .sail-box{background:var(--surface2);border:1px solid #1e3a6e;border-radius:6px;padding:9px 11px;margin-bottom:12px;font-size:11px;line-height:1.55;color:#93c5fd}
+    .sail-box strong{color:#bfdbfe;font-weight:700}
+    .sail-box .gain{color:#6ee7b7;font-size:10px;margin-top:3px}
+    /* Spec grid */
+    .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+    .spec-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .spec-val{font-size:13px;font-weight:700;color:var(--text);line-height:1.2;margin-top:1px}
+    .spec-val.hs{color:#3b82f6}
+    /* Controls */
+    .controls{margin-bottom:12px}
+    .ctrl-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px}
+    .btn-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+    .btn{padding:4px 10px;border-radius:99px;border:1.5px solid;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;background:transparent;letter-spacing:.02em}
+    .btn.active{opacity:1}
+    .btn.inactive{opacity:.32}
+    .btn-preset{padding:4px 12px;border-radius:99px;border:1px solid var(--border);font-size:10px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--muted);transition:all .15s}
+    .btn-preset:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-utility{padding:4px 10px;border-radius:99px;border:1px solid var(--border);font-size:10px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--muted);transition:all .15s}
+    .btn-utility:hover{border-color:#6b7fa0;color:var(--text)}
+    .toggle-row{display:flex;align-items:center;gap:7px;margin-top:6px;font-size:10px;color:var(--muted)}
+    .toggle{width:30px;height:16px;background:#1e2d47;border-radius:99px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
+    .toggle.on{background:#1d4ed8}
+    .toggle::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+    .toggle.on::after{transform:translateX(14px)}
+    /* VMG table */
+    .vmg-tbl{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:4px}
+    .vmg-tbl th{background:var(--surface2);color:var(--muted);padding:4px 5px;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:center}
+    .vmg-tbl th:first-child{text-align:left}
+    .vmg-tbl td{padding:3.5px 5px;border-bottom:1px solid var(--border);text-align:center;font-variant-numeric:tabular-nums}
+    .vmg-tbl td:first-child{text-align:left;font-weight:700}
+    .beat{color:#6ee7b7}
+    .run{color:#fcd34d}
+    /* Chesapeake note */
+    .bay-box{background:var(--surface2);border-left:3px solid #1e40af;border-radius:0 4px 4px 0;padding:7px 9px;font-size:10px;line-height:1.55;color:var(--muted);margin-top:10px}
+    .bay-box strong{color:#93c5fd}
+    .live-box{background:var(--surface2);border:1px solid #1f4c8a;border-radius:6px;padding:10px 11px;margin-bottom:12px}
+    .live-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}
+    .live-title{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#93c5fd}
+    .live-refresh{border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;border-radius:99px;padding:2px 8px;cursor:pointer}
+    .live-refresh:hover{border-color:#3b82f6;color:#bfdbfe}
+    .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
+    .live-k{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .live-v{font-size:13px;font-weight:700;color:var(--text);margin-top:1px;font-variant-numeric:tabular-nums}
+    .live-v.small{font-size:11px;line-height:1.25}
+    .live-note{font-size:9px;color:var(--muted);margin-top:7px;line-height:1.45}
+    .live-alert{font-size:10px;color:#60a5fa;margin-top:6px}
+    /* Tooltip */
+    #tooltip{position:absolute;background:rgba(14,23,41,.96);border:1px solid var(--border);border-radius:6px;padding:7px 11px;font-size:11px;pointer-events:none;display:none;color:var(--text);min-width:120px;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+    /* Footer */
+    .footer{background:var(--surface);border-top:1px solid var(--border);padding:5px 18px;font-size:9px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .footer a{color:var(--muted);text-decoration:none}
+    .footer a:hover{color:var(--accent)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg class="logo" viewBox="0 0 52 52" fill="none" aria-label="Pearson 31-2">
+        <path d="M10 42 Q26 46 42 42 L40 44 Q26 49 12 44 Z" fill="#3b82f6"/>
+        <line x1="26" y1="42" x2="26" y2="6" stroke="#3b82f6" stroke-width="1.5"/>
+        <path d="M26 8 L26 42 L40 37 Z" fill="#3b82f6" opacity=".8"/>
+        <path d="M26 16 L26 42 L15 39 Z" fill="#60a5fa" opacity=".45"/>
+      </svg>
+      <div>
+        <div class="boat-name">Pearson 31-2 · Hull 117</div>
+        <div class="boat-sub">Speed Polar Diagram</div>
+      </div>
+    </div>
+    <div class="badges">
+      <a class="dashboard-link" href="./index.html">← Dashboard</a>
+      <span class="bdg bdg-blue">135% Genoa + Main</span>
+      <span class="bdg bdg-green">SA 576 ft²</span>
+      <span class="bdg bdg-amber">HS 6.76 kn</span>
+      <span class="bdg bdg-blue">Est. 10,425 lb</span>
+      <span class="bdg bdg-green" id="liveBadge">Live Wind --</span>
+      <span class="bdg bdg-blue" id="liveModeBadge">Live Mode ON</span>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="canvas-wrap">
+      <canvas id="c"></canvas>
+      <div id="tooltip"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <div class="sec-title">Sail Configuration</div>
+      <div class="live-box">
+        <div class="live-head">
+          <div class="live-title">Live Weather · Tolchester</div>
+          <button class="live-refresh" id="liveRefreshBtn" type="button">Refresh</button>
+        </div>
+        <div class="live-grid">
+          <div><div class="live-k">Wind</div><div class="live-v" id="liveWind">--</div></div>
+          <div><div class="live-k">Gust</div><div class="live-v" id="liveGust">--</div></div>
+          <div><div class="live-k">Direction</div><div class="live-v" id="liveDir">--</div></div>
+          <div><div class="live-k">Temp</div><div class="live-v" id="liveTemp">--</div></div>
+          <div><div class="live-k">Next Tide</div><div class="live-v small" id="liveTide">--</div></div>
+          <div><div class="live-k">Current</div><div class="live-v small" id="liveCurrent">--</div></div>
+        </div>
+        <div class="live-alert" id="liveOverlayHint">Overlay: --</div>
+        <div class="live-note" id="liveNote">Loading latest observations...</div>
+      </div>
+
+      <div class="sail-box">
+        <strong>135% Genoa + Main</strong><br>
+        Headsail: 355 ft² &nbsp;·&nbsp; Main: 220.8 ft²<br>
+        Total SA: <strong>576 ft²</strong> &nbsp;·&nbsp; SA/D: <strong>19.97</strong>
+        <div class="gain">~0.5–0.8 kn faster close reaching vs working jib in 10–14 kn</div>
+      </div>
+
+      <div class="sec-title">Vessel Specifications</div>
+      <div class="spec-grid">
+        <div class="spec-item"><div class="spec-label">LOA</div><div class="spec-val">30.67 ft</div></div>
+        <div class="spec-item"><div class="spec-label">LWL</div><div class="spec-val">25.42 ft</div></div>
+        <div class="spec-item"><div class="spec-label">Beam</div><div class="spec-val">10.67 ft</div></div>
+        <div class="spec-item"><div class="spec-label">Draft</div><div class="spec-val">5.80 ft</div></div>
+        <div class="spec-item"><div class="spec-label">Displacement</div><div class="spec-val">10,425 lb</div></div>
+        <div class="spec-item"><div class="spec-label">Ballast · 38%</div><div class="spec-val">3,800 lb</div></div>
+        <div class="spec-item"><div class="spec-label">SA Total</div><div class="spec-val">576 ft²</div></div>
+        <div class="spec-item"><div class="spec-label">SA/D</div><div class="spec-val">19.97</div></div>
+        <div class="spec-item"><div class="spec-label">I / J</div><div class="spec-val">42.5 / 12.8 ft</div></div>
+        <div class="spec-item"><div class="spec-label">P / E</div><div class="spec-val">36.8 / 12.0 ft</div></div>
+        <div class="spec-item"><div class="spec-label">Hull Speed</div><div class="spec-val hs">6.76 kn</div></div>
+        <div class="spec-item"><div class="spec-label">PHRF</div><div class="spec-val">156</div></div>
+      </div>
+
+      <div class="sec-title">True Wind Speed — Toggle Overlays</div>
+      <div class="controls">
+        <div class="btn-row" id="btnRow"></div>
+        <div class="btn-row">
+          <button class="btn-utility" onclick="showAll()">Show All</button>
+          <button class="btn-utility" onclick="clearAll()">Clear All</button>
+          <button class="btn-preset" onclick="setChesBay()">Chesapeake (8/10/12/14)</button>
+        </div>
+        <div class="toggle-row">
+          <button class="toggle on" id="liveModeToggle" onclick="toggleLiveMode()" aria-label="Toggle live wind auto overlay"></button>
+          <span>Live mode: auto-select nearest wind curve</span>
+        </div>
+        <div class="toggle-row">
+          <button class="toggle on" id="vmgToggle" onclick="toggleVMG()" aria-label="Toggle VMG optimum angles"></button>
+          <span>Show VMG optimum angles</span>
+        </div>
+      </div>
+
+      <div class="sec-title">VMG Optimum Angles</div>
+      <table class="vmg-tbl">
+        <thead><tr>
+          <th>TWS</th>
+          <th class="beat">BEAT°</th><th class="beat">BSP↑</th>
+          <th class="run">RUN°</th><th class="run">BSP↓</th>
+        </tr></thead>
+        <tbody id="vmgBody"></tbody>
+      </table>
+
+      <div class="bay-box">
+        Most Chesapeake sailing falls in <strong>8–14 kn TWS</strong>. The 135% genoa is your power canvas in this range — expect the boat to feel well-powered on close reach (60–75°) and slightly overpowered in 16+ kn. Consider furling to ~110% once you're heeling past 20°. Close-hauled VMG in 10 kn: <strong>~4.1 kn</strong>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <span>Polar computed from Pearson 33 reference (Seapilot) scaled for Hull 117 with 135% genoa (355 ft²) and estimated sailing displacement of 10,425 lb. Gains vs 100% foretriangle: +0.5–0.8 kn close-reaching in 10–14 kn, diminishing above 16 kn as sail depowers. SailboatData</span>
+  <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener">Created with Perplexity Computer</a>
+</div>
+
+<script>
+const TWA_PTS = [52,60,75,90,110,120,135,150];
+const TWS_LIST = [6,8,10,12,14,16,20];
+const DATA = {
+  6:  [4.98,5.39,5.67,5.73,5.25,5.02,4.39,3.66],
+  8:  [6.05,6.48,6.65,6.65,6.22,5.96,5.41,4.67],
+  10: [6.65,7.12,7.29,7.24,6.87,6.59,6.24,5.48],
+  12: [6.88,7.34,7.57,7.46,7.17,7.10,6.74,6.18],
+  14: [6.92,7.26,7.80,7.65,7.46,7.39,7.13,6.57],
+  16: [6.87,7.17,7.69,7.70,7.56,7.60,7.35,6.91],
+  20: [6.75,7.00,7.47,7.68,7.60,7.87,7.85,7.53]
+};
+const HS = 6.76;
+const COLORS = {6:'#3b82f6',8:'#06b6d4',10:'#10b981',12:'#84cc16',14:'#eab308',16:'#f97316',20:'#ef4444'};
+const LIVE_POINT = { lat: 39.2085, lon: -76.2455, name: 'Tolchester Beach' };
+const NOAA_TIDE_STATION = '8573364';
+const NOAA_CURRENT_STATION = 'cb1202';
+const LIVE_REFRESH_MS = 10 * 60 * 1000;
+
+let active = new Set(TWS_LIST);
+let manualActive = new Set(TWS_LIST);
+let showVMG = true;
+let liveMode = true;
+let mouseX = -1, mouseY = -1;
+let liveWeather = null;
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+function fmt1(v){return Number.isFinite(v) ? v.toFixed(1) : '--';}
+function cToF(c){return Number.isFinite(c) ? (c*9/5)+32 : null;}
+function msToKt(ms){return Number.isFinite(ms) ? ms*1.94384 : null;}
+function mphToKt(mph){return Number.isFinite(mph) ? mph*0.868976 : null;}
+function degreeToCardinal(deg){
+  if(!Number.isFinite(deg)) return '--';
+  const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  const idx=Math.round((((deg%360)+360)%360)/22.5)%16;
+  return dirs[idx];
+}
+function nearestTws(v){
+  return TWS_LIST.reduce((best,cur)=>Math.abs(cur-v)<Math.abs(best-v)?cur:best,TWS_LIST[0]);
+}
+function parseWindSpeedMph(str){
+  if(!str) return null;
+  const m=String(str).match(/(\d+(?:\.\d+)?)/);
+  return m?Number(m[1]):null;
+}
+function parseNoaaDate(str){
+  if(!str) return null;
+  const iso = str.includes('T') ? str : str.replace(' ','T');
+  const d = new Date(iso);
+  return Number.isFinite(d.getTime()) ? d : null;
+}
+function fmtTime(d){
+  if(!(d instanceof Date) || !Number.isFinite(d.getTime())) return '--';
+  return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+}
+function applyLiveOverlay(){
+  if(!liveMode || !liveWeather || !Number.isFinite(liveWeather.overlay)) return;
+  active = new Set([liveWeather.overlay]);
+  updateBtns();
+}
+function setLiveModeUi(){
+  const t=document.getElementById('liveModeToggle');
+  const b=document.getElementById('liveModeBadge');
+  t.className='toggle'+(liveMode?' on':'');
+  b.textContent=liveMode?'Live Mode ON':'Live Mode OFF';
+  b.className='bdg '+(liveMode?'bdg-blue':'bdg-amber');
+}
+function setTideCurrentUi(data){
+  const tideEl=document.getElementById('liveTide');
+  const curEl=document.getElementById('liveCurrent');
+  if(!data){
+    tideEl.textContent='--';
+    curEl.textContent='--';
+    return;
+  }
+  tideEl.textContent=data.nextTide || '--';
+  curEl.textContent=data.nextCurrent || '--';
+}
+
+async function fetchTideCurrent(){
+  const base='https://api.tidesandcurrents.noaa.gov/api/prod/datagetter';
+  // NOAA datagetter rejects begin_date=today/end_date=today (HTTP 400) and its
+  // error responses omit CORS headers, so the browser surfaces it as a CORS
+  // failure. Use the supported single-day form `date=today` instead.
+  const tideUrl=`${base}?product=predictions&application=pearson_polar&date=today&datum=MLLW&station=${NOAA_TIDE_STATION}&time_zone=lst_ldt&units=english&interval=hilo&format=json`;
+  const currentUrl=`${base}?product=currents_predictions&application=pearson_polar&date=today&station=${NOAA_CURRENT_STATION}&time_zone=lst_ldt&units=english&interval=max_slack&bin=1&format=json`;
+  try{
+    const [tideResp,curResp]=await Promise.all([
+      fetch(tideUrl,{cache:'no-store'}),
+      fetch(currentUrl,{cache:'no-store'})
+    ]);
+    let nextTide='--', nextCurrent='--';
+    const now=Date.now();
+
+    if(tideResp.ok){
+      const tideJson=await tideResp.json();
+      const pred=Array.isArray(tideJson?.predictions)?tideJson.predictions:[];
+      const next=pred
+        .map(p=>({at:parseNoaaDate(p.t), type:p.type==='H'?'High':'Low'}))
+        .filter(p=>p.at && p.at.getTime()>=now)
+        .sort((a,b)=>a.at-b.at)[0];
+      if(next) nextTide=`${next.type} ${fmtTime(next.at)}`;
+    }
+
+    if(curResp.ok){
+      const curJson=await curResp.json();
+      const raw=Array.isArray(curJson?.current_predictions?.cp) ? curJson.current_predictions.cp : [];
+      const next=raw
+        .map(c=>({
+          at:parseNoaaDate(c.Time || c.time || c.t),
+          type:String(c.Type || c.type || '').toLowerCase(),
+          vel:Number(c.Velocity_Major ?? c.Velocity ?? c.velocity ?? c.v)
+        }))
+        .filter(c=>c.at && c.at.getTime()>=now)
+        .sort((a,b)=>a.at-b.at)[0];
+      if(next){
+        let phase='Current';
+        if(next.type.includes('slack')) phase='Slack';
+        else if(next.type.includes('flood')) phase='Flood max';
+        else if(next.type.includes('ebb')) phase='Ebb max';
+        const velPart=Number.isFinite(next.vel)?` ${next.vel.toFixed(1)} kn`:'';
+        nextCurrent=`${phase}${velPart} @ ${fmtTime(next.at)}`;
+      }
+    }
+
+    setTideCurrentUi({nextTide,nextCurrent});
+  }catch(_err){
+    setTideCurrentUi(null);
+  }
+}
+
+function setLiveWeatherUI(data){
+  const windEl=document.getElementById('liveWind');
+  const gustEl=document.getElementById('liveGust');
+  const dirEl=document.getElementById('liveDir');
+  const tempEl=document.getElementById('liveTemp');
+  const noteEl=document.getElementById('liveNote');
+  const hintEl=document.getElementById('liveOverlayHint');
+  const badgeEl=document.getElementById('liveBadge');
+  if(!data){
+    liveWeather = null;
+    windEl.textContent='--';
+    gustEl.textContent='--';
+    dirEl.textContent='--';
+    tempEl.textContent='--';
+    hintEl.textContent='Overlay: --';
+    noteEl.textContent='Live weather unavailable. Using static polar only.';
+    badgeEl.textContent='Live Wind --';
+    draw();
+    return;
+  }
+  const overlay = nearestTws(data.windKt);
+  liveWeather = {...data, overlay};
+  windEl.textContent=`${fmt1(data.windKt)} kn`;
+  gustEl.textContent=Number.isFinite(data.gustKt)?`${fmt1(data.gustKt)} kn`:'--';
+  dirEl.textContent=Number.isFinite(data.windDeg)?`${degreeToCardinal(data.windDeg)} (${Math.round(data.windDeg)}°)`:data.windDirText||'--';
+  tempEl.textContent=Number.isFinite(data.tempF)?`${Math.round(data.tempF)}°F`:'--';
+  hintEl.textContent=`Overlay: nearest ${overlay} kn curve`;
+  noteEl.textContent=`Source: ${data.source}${data.station?` · ${data.station}`:''}${data.timeText?` · Updated ${data.timeText}`:''}`;
+  badgeEl.textContent=`Live Wind ${fmt1(data.windKt)} kn`;
+  applyLiveOverlay();
+  draw();
+}
+
+async function fetchLiveWeather(){
+  const refreshBtn=document.getElementById('liveRefreshBtn');
+  refreshBtn.disabled=true;
+  // Tide/current and wind are independent feeds. Run tide/current alongside the
+  // wind fetch (not before it) so a tide/current failure can never delay or
+  // blank the live wind. fetchTideCurrent() manages its own UI and never throws.
+  const tideCurrentDone=fetchTideCurrent();
+  try{
+    // Primary: NDBC TCBM2 — the meteorological station at Tolchester Marina.
+    // If unavailable, only use non-station forecast fallback to avoid any
+    // chance of resolving to inland land-based observation stations.
+    try{
+      const tcbm2Resp=await fetch('https://www.ndbc.noaa.gov/data/realtime2/TCBM2.txt',{cache:'no-store'});
+      if(tcbm2Resp.ok){
+        const text=await tcbm2Resp.text();
+        const line=text.split(/\n/).map(l=>l.trim()).find(l=>l&&!l.startsWith('#'));
+        if(line){
+          const f=line.split(/\s+/);
+          const wspdMs=parseFloat(f[6]);
+          const gustMs=parseFloat(f[7]);
+          const wdir=parseFloat(f[5]);
+          if(Number.isFinite(wspdMs)&&wspdMs!==99.0){
+            const [yr,mo,dy,hh,mm]=f;
+            const t=new Date(`${yr}-${mo.padStart(2,'0')}-${dy.padStart(2,'0')}T${hh.padStart(2,'0')}:${mm.padStart(2,'0')}:00Z`);
+            setLiveWeatherUI({
+              source:'NDBC TCBM2',
+              station:'Tolchester Marina',
+              windKt:wspdMs*1.94384,
+              gustKt:Number.isFinite(gustMs)&&gustMs!==99.0?gustMs*1.94384:null,
+              windDeg:Number.isFinite(wdir)?wdir:null,
+              windDirText:null,
+              tempF:null,
+              timeText:t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+            });
+            return;
+          }
+        }
+      }
+    }catch(_tcbm2Err){ /* fall through to forecast-only path */ }
+
+    // Forecast fallback only (no NWS observation-station requests).
+    const ptResp=await fetch(`https://api.weather.gov/points/${LIVE_POINT.lat},${LIVE_POINT.lon}`,{cache:'no-store'});
+    if(!ptResp.ok) throw new Error('weather.gov points request failed');
+    const ptJson=await ptResp.json();
+    const hourlyUrl=ptJson?.properties?.forecastHourly;
+
+    // Final fallback: hourly forecast.
+    if(hourlyUrl){
+      const hResp=await fetch(hourlyUrl,{cache:'no-store'});
+      if(hResp.ok){
+        const hJson=await hResp.json();
+        const p=hJson?.properties?.periods?.[0];
+        if(p){
+          const windMph=parseWindSpeedMph(p.windSpeed);
+          const windKt=mphToKt(windMph);
+          if(Number.isFinite(windKt)){
+            setLiveWeatherUI({
+              source:'NOAA/NWS hourly forecast (gridpoint)',
+              station:null,
+              windKt,
+              gustKt:null,
+              windDeg:null,
+              windDirText:p.windDirection||'--',
+              tempF:Number.isFinite(p.temperature)?p.temperature:null,
+              timeText:p.startTime?new Date(p.startTime).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''
+            });
+            return;
+          }
+        }
+      }
+    }
+    setLiveWeatherUI(null);
+  }catch(_err){
+    setLiveWeatherUI(null);
+  }finally{
+    try{ await tideCurrentDone; }catch(_e){ /* tide/current handles its own UI */ }
+    refreshBtn.disabled=false;
+  }
+}
+
+function vmg(twa,bsp){return bsp*Math.cos(twa*Math.PI/180);}
+function bestVMG(tws){
+  const s=DATA[tws];
+  let b={v:0,twa:0,bsp:0},r={v:0,twa:0,bsp:0};
+  TWA_PTS.forEach((a,i)=>{
+    const v=vmg(a,s[i]);
+    if(a<=90&&v>b.v)b={v,twa:a,bsp:s[i]};
+    if(a>90&&Math.abs(v)>r.v)r={v:Math.abs(v),twa:a,bsp:s[i]};
+  });
+  return{beat:b,run:r};
+}
+
+function interp(tws,deg){
+  const s=DATA[tws];
+  for(let i=0;i<TWA_PTS.length-1;i++){
+    if(deg>=TWA_PTS[i]&&deg<=TWA_PTS[i+1]){
+      const t=(deg-TWA_PTS[i])/(TWA_PTS[i+1]-TWA_PTS[i]);
+      return s[i]+t*(s[i+1]-s[i]);
+    }
+  }
+  return s[s.length-1];
+}
+
+function polar2xy(twa,bsp,cx,cy,scale,mirror=false){
+  const rad=(twa-90)*Math.PI/180,r=bsp*scale;
+  return[mirror?cx-r*Math.cos(rad):cx+r*Math.cos(rad), cy+r*Math.sin(rad)];
+}
+
+function draw(){
+  // Use getBoundingClientRect for accurate post-layout dimensions
+  const rect=canvas.getBoundingClientRect();
+  const W=rect.width, H=rect.height;
+  if(W<10||H<10) return;
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+  const MAX=8.5;
+
+  // The polar spans TWA 52°–150°. At 150° the point is at:
+  //   x = ±bsp*cos(150°-90°) = ±bsp*cos(60°) = ±bsp*0.5  (horizontal)
+  //   y =  bsp*sin(150°-90°) =  bsp*sin(60°) =  bsp*0.866 (downward from origin)
+  // So the full diagram height needed from origin = MAX*sin(60°)*scale = MAX*0.866*scale
+  // Width needed from origin = MAX*scale (at 90° beam reach)
+  // We want:
+  //   origin cy such that: cy + MAX*0.866*scale + padding <= H
+  //   origin cx = W/2, and: W/2 - MAX*scale - padding >= 0
+  // Solve for scale from both constraints and take min:
+  const PAD = 18; // px padding around edges
+  const scaleByH = (H - PAD - 38) / (MAX * (1 + 0.875)); // upwind top + full downwind (sin60°=0.866, add margin)
+  const scaleByW = (W/2 - PAD - 10) / MAX;
+  const scale = Math.min(scaleByH, scaleByW);
+  // cx centered, cy placed so upwind top has PAD clearance
+  const cx = W/2;
+  const cy = PAD + MAX*scale; // MAX*scale above cy is the top of the upwind arc
+
+  // Background
+  ctx.fillStyle='#080d18';
+  ctx.fillRect(0,0,W,H); // W,H are CSS px — correct after scale()
+
+  // Grid rings
+  for(let s=1;s<=8;s++){
+    const r=s*scale;
+    const isHS=Math.abs(s-HS)<0.45;
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,Math.PI,0);
+    ctx.strokeStyle=isHS?'rgba(59,130,246,.4)':'rgba(255,255,255,.06)';
+    ctx.lineWidth=isHS?1.2:0.6;
+    if(isHS){ctx.setLineDash([6,4]);}else{ctx.setLineDash([]);}
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // label
+    ctx.fillStyle=isHS?'rgba(59,130,246,.8)':'rgba(255,255,255,.2)';
+    ctx.font=`${isHS?'bold ':''} ${isHS?10:8}px system-ui,sans-serif`;
+    ctx.fillText(isHS?`${s}kn ≈HS`:`${s}kn`, cx+4, cy-r+10);
+  }
+
+  // Angle lines
+  const ANGLES=[52,60,75,90,110,120,135,150,180];
+  ANGLES.forEach(a=>{
+    ctx.setLineDash([3,4]);
+    ctx.strokeStyle='rgba(255,255,255,.07)';
+    ctx.lineWidth=0.6;
+    [false,true].forEach(mir=>{
+      const[x,y]=polar2xy(a,MAX+0.5,cx,cy,scale,mir);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    if(a!==180){
+      const[lx,ly]=polar2xy(a,MAX+1.0,cx,cy,scale,false);
+      ctx.fillStyle='rgba(255,255,255,.25)';
+      ctx.font='9px system-ui,sans-serif';
+      ctx.textAlign=a>90?'left':'right';
+      ctx.fillText(a+'°',lx,ly+3);
+    }
+  });
+  ctx.textAlign='center';
+  // Wind label
+  ctx.fillStyle='rgba(255,255,255,.2)';
+  ctx.font='9px system-ui,sans-serif';
+  ctx.fillText('0° Wind',cx,cy-MAX*scale-10);
+  // Center line
+  ctx.strokeStyle='rgba(255,255,255,.1)';
+  ctx.lineWidth=0.7;
+  ctx.beginPath(); ctx.moveTo(cx,cy-MAX*scale-6); ctx.lineTo(cx,cy); ctx.stroke();
+  // PORT/STBD
+  ctx.fillStyle='rgba(255,255,255,.12)';
+  ctx.font='italic 9px system-ui,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('PORT',cx-MAX*scale*0.72,cy+14);
+  ctx.fillText('STBD',cx+MAX*scale*0.72,cy+14);
+
+  // Curves
+  TWS_LIST.forEach(tws=>{
+    if(!active.has(tws))return;
+    const col=COLORS[tws];
+    const isLive = !!liveWeather && liveWeather.overlay===tws;
+    // Starboard (solid)
+    ctx.beginPath();
+    for(let d=TWA_PTS[0];d<=TWA_PTS[TWA_PTS.length-1];d++){
+      const b=interp(tws,d);
+      const[x,y]=polar2xy(d,b,cx,cy,scale,false);
+      d===TWA_PTS[0]?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=col; ctx.lineWidth=isLive?3:2; ctx.setLineDash([]); ctx.globalAlpha=isLive?1:0.9;
+    ctx.stroke();
+    // Port (dashed)
+    ctx.beginPath();
+    for(let d=TWA_PTS[0];d<=TWA_PTS[TWA_PTS.length-1];d++){
+      const b=interp(tws,d);
+      const[x,y]=polar2xy(d,b,cx,cy,scale,true);
+      d===TWA_PTS[0]?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=col; ctx.lineWidth=isLive?1.6:1.2; ctx.setLineDash([4,3]); ctx.globalAlpha=isLive?0.55:0.38;
+    ctx.stroke();
+    ctx.globalAlpha=1; ctx.setLineDash([]);
+    // Data dots
+    TWA_PTS.forEach((a,i)=>{
+      const[x,y]=polar2xy(a,DATA[tws][i],cx,cy,scale,false);
+      ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2);
+      ctx.fillStyle=col; ctx.globalAlpha=0.8; ctx.fill(); ctx.globalAlpha=1;
+    });
+    // Label at 90°
+    const idx90=TWA_PTS.indexOf(90);
+    const[lx,ly]=polar2xy(90,DATA[tws][idx90],cx,cy,scale,false);
+    ctx.fillStyle=col; ctx.font='bold 9px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText(tws+'kn'+(isLive?' *LIVE':''),lx+5,ly+3);
+  });
+  ctx.textAlign='left';
+
+  // VMG markers
+  if(showVMG){
+    TWS_LIST.forEach(tws=>{
+      if(!active.has(tws))return;
+      const{beat,run}=bestVMG(tws);
+      const col=COLORS[tws];
+      [[beat.twa,beat.bsp,false],[beat.twa,beat.bsp,true]].forEach(([a,b,mir])=>{
+        const[x,y]=polar2xy(a,b,cx,cy,scale,mir);
+        ctx.beginPath(); ctx.moveTo(x,y-7); ctx.lineTo(x-4,y+2); ctx.lineTo(x+4,y+2); ctx.closePath();
+        ctx.fillStyle=col; ctx.globalAlpha=0.7; ctx.fill(); ctx.globalAlpha=1;
+      });
+      [[run.twa,run.bsp,false],[run.twa,run.bsp,true]].forEach(([a,b,mir])=>{
+        const[x,y]=polar2xy(a,b,cx,cy,scale,mir);
+        ctx.beginPath(); ctx.moveTo(x,y+7); ctx.lineTo(x-4,y-2); ctx.lineTo(x+4,y-2); ctx.closePath();
+        ctx.fillStyle=col; ctx.globalAlpha=0.7; ctx.fill(); ctx.globalAlpha=1;
+      });
+    });
+  }
+
+  // Hover probe
+  if(mouseX>0&&mouseY>0){
+    const dx=mouseX-cx, dy=mouseY-cy;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    let ang=Math.atan2(dy,dx)*180/Math.PI+90;
+    if(ang<0)ang+=360;
+    if(ang>=TWA_PTS[0]&&ang<=TWA_PTS[TWA_PTS.length-1]){
+      const bsp=dist/scale;
+      if(bsp>=1&&bsp<=MAX+1){
+        const vmgVal=vmg(ang,bsp);
+        tooltip.style.display='block';
+        tooltip.style.left=(mouseX+14)+'px';
+        tooltip.style.top=(mouseY-20)+'px';
+        tooltip.innerHTML=`<b>TWA:</b> ${ang.toFixed(0)}°<br><b>BSP:</b> ${bsp.toFixed(2)} kn<br><b>VMG:</b> ${Math.abs(vmgVal).toFixed(2)} kn`;
+        // Highlight point
+        ctx.beginPath(); ctx.arc(mouseX,mouseY,5,0,Math.PI*2);
+        ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=1.5; ctx.stroke();
+      }else{tooltip.style.display='none';}
+    }else{tooltip.style.display='none';}
+  }
+}
+
+// Resize — defer one animation frame so layout has settled before reading dimensions
+const ro=new ResizeObserver(()=>requestAnimationFrame(()=>draw()));
+ro.observe(canvas.parentElement);
+window.addEventListener('resize',()=>requestAnimationFrame(()=>draw()));
+
+// Mouse
+canvas.addEventListener('mousemove',e=>{
+  const r=canvas.getBoundingClientRect();
+  mouseX=e.clientX-r.left; mouseY=e.clientY-r.top; draw();
+});
+canvas.addEventListener('mouseleave',()=>{mouseX=-1;mouseY=-1;tooltip.style.display='none';draw();});
+
+// Controls
+function showAll(){
+  active=new Set(TWS_LIST);
+  if(!liveMode) manualActive=new Set(active);
+  updateBtns();
+  draw();
+}
+function clearAll(){
+  active.clear();
+  if(!liveMode) manualActive=new Set(active);
+  updateBtns();
+  draw();
+}
+function setChesBay(){
+  active=new Set([8,10,12,14]);
+  if(!liveMode) manualActive=new Set(active);
+  updateBtns();
+  draw();
+}
+function toggleVMG(){showVMG=!showVMG;document.getElementById('vmgToggle').className='toggle'+(showVMG?' on':'');draw();}
+function toggleLiveMode(){
+  if(liveMode){
+    liveMode=false;
+    active=new Set(manualActive);
+  }else{
+    manualActive=new Set(active);
+    liveMode=true;
+    applyLiveOverlay();
+  }
+  setLiveModeUi();
+  updateBtns();
+  draw();
+}
+function toggleTWS(tws){
+  if(liveMode) return;
+  active.has(tws)?active.delete(tws):active.add(tws);
+  manualActive=new Set(active);
+  updateBtns();
+  draw();
+}
+function updateBtns(){
+  document.querySelectorAll('.tws-btn').forEach(b=>{
+    const t=+b.dataset.tws;
+    b.className='btn tws-btn '+(active.has(t)?'active':'inactive');
+    b.disabled=liveMode;
+  });
+}
+
+// Build buttons
+const row=document.getElementById('btnRow');
+TWS_LIST.forEach(tws=>{
+  const b=document.createElement('button');
+  b.className='btn tws-btn active'; b.dataset.tws=tws;
+  b.textContent=tws+' kn';
+  b.style.color=COLORS[tws]; b.style.borderColor=COLORS[tws];
+  b.onclick=()=>toggleTWS(tws);
+  row.appendChild(b);
+});
+
+// VMG table
+const vmgBody=document.getElementById('vmgBody');
+TWS_LIST.forEach(tws=>{
+  const{beat,run}=bestVMG(tws);
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td style="color:${COLORS[tws]}">${tws}kn</td>
+    <td class="beat">${beat.twa}°</td><td class="beat">${beat.bsp.toFixed(2)}</td>
+    <td class="run">${run.twa}°</td><td class="run">${run.bsp.toFixed(2)}</td>`;
+  vmgBody.appendChild(tr);
+});
+
+// Defer initial draw until after layout is fully settled
+requestAnimationFrame(()=>requestAnimationFrame(()=>draw()));
+
+document.getElementById('liveRefreshBtn').addEventListener('click', fetchLiveWeather);
+setLiveModeUi();
+setTideCurrentUi(null);
+fetchLiveWeather();
+setInterval(fetchLiveWeather, LIVE_REFRESH_MS);
+</script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+</html>

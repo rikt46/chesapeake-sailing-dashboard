@@ -1,0 +1,14 @@
+# ──────────────────────────────────────────────────────────
+# Copy this file locally to terraform.tfvars before running terraform apply.
+# Keep terraform.tfvars untracked; only this example belongs in git.
+# ──────────────────────────────────────────────────────────
+
+project_name = "tolchester-sailing"
+aws_region   = "us-east-1"
+
+# Custom domain on Route 53
+domain_name     = ""
+route53_zone_id = ""
+
+# Reuse an account-wide GitHub OIDC provider if one already exists
+# github_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
