@@ -9,6 +9,10 @@ recommendation tuned to the boat's polars and the skipper's crew/safety mode.
 It's a static site — plain HTML, CSS, and vanilla ES-module JavaScript, no
 backend and no build step — designed to be hosted on S3 + CloudFront.
 
+**Live demo:** <https://dashboard.sailingaurora.com>
+
+![Tolchester Sailing Dashboard — live conditions, a go/reduce-sail/no-go recommendation, and a color-coded 5-day outlook](docs/screenshot.png)
+
 ## Tech overview
 
 - **Frontend:** vanilla JS ES modules ([`app.js`](app.js) + [`src/`](src/)),
