@@ -24,6 +24,31 @@ backend and no build step — designed to be hosted on S3 + CloudFront.
 - **Deploy:** GitHub Actions assumes an AWS IAM role via OIDC (no stored AWS
   keys); see [`infra/`](infra/) and [`architecture-diagram.md`](architecture-diagram.md).
 
+## Want this for your boat?
+
+This dashboard is built for one specific boat and one stretch of water. If you
+want a hosted version that works with **any boat on any stretch of the
+Chesapeake**, [**MySailingPlan.com**](https://mysailingplan.com) offers a
+paid-tier dashboard with features that go beyond what a static single-boat page
+can provide:
+
+- **Sailability scoring** — a 0–100 composite (speed + comfort + weather) so
+  you get one number instead of a stack of raw values to interpret
+- **Departure window optimizer** — scans the next 7 days of NOAA forecasts and
+  ranks leave times by your boat's polar, keel draft, and preferred wind angles
+- **Current-opposition alerts** — flags when wind and tidal current are setting
+  up opposing chop
+- **Crew preparedness** — hypothermia risk, PFD recommendations, and wind chill
+  based on current water and air temperature
+- **Crew access** — invite crew with role-based permissions (captain, crew,
+  viewer, and more) so your team can view the same dashboard without sharing
+  your login
+- **Custom polar data** — import ORC polars for your specific boat
+
+→ [mysailingplan.com](https://mysailingplan.com)
+
+---
+
 ## Make it your own
 
 This dashboard is hard-tuned to one boat and one stretch of water. To adapt it,
