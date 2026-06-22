@@ -1,0 +1,63 @@
+name: Bug report
+description: Something is wrong with the data, recommendation, or UI
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. The more detail you provide, the faster it can be triaged.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the dashboard is affected?
+      options:
+        - Wind / weather data
+        - Tide / depth / current data
+        - Go/no-go recommendation
+        - Sail plan suggestion
+        - Charts (hourly wind or tide)
+        - Nautical chart / map
+        - Notice to Mariners
+        - Float plan checklist
+        - Theme / layout / UI
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did the dashboard show, and what did you expect?
+      placeholder: "The tide chart showed high tide at 03:00 but NOAA's site shows it at 05:30."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the dashboard
+        2. Select day X in the 5-day outlook
+        3. See the tide panel showing …
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: "Chrome 125 / macOS 14, or Safari on iPhone iOS 17"
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Console errors, screenshots, or links to the NOAA/NWS data that contradicts what the dashboard shows.
+    validations:
+      required: false

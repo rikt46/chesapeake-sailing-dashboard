@@ -61,13 +61,33 @@ edit [`src/config.js`](src/config.js) — it holds, in one place:
   draft / depth constraints, and the sail-plan wind thresholds.
 - **Crew & safety modes** — wind offsets applied to the recommendation.
 
+### Finding your station IDs
+
+Every value in `src/config.js` that references a station ID needs to be
+replaced with one that covers your sailing area:
+
+| Config key | What it is | How to find yours |
+| --- | --- | --- |
+| `NOAA_STATION` | NOAA tide gauge (tides, water temp, water level) | [tidesandcurrents.noaa.gov](https://tidesandcurrents.noaa.gov/) → find your nearest station → copy the 7-digit ID |
+| `TCBM2_STATION_ID` | NDBC meteorological buoy or C-MAN station (live wind) | [ndbc.noaa.gov/obs.shtml](https://www.ndbc.noaa.gov/obs.shtml) → find the nearest active station → copy the ID |
+| `NOAA_CURRENT_STATION` | NOAA tidal current prediction station | [tidesandcurrents.noaa.gov/currents/](https://tidesandcurrents.noaa.gov/currents/) → pick the channel nearest your route |
+| `WEATHER_GRID` | NWS forecast grid point | `curl "https://api.weather.gov/points/{lat},{lon}"` → read `gridId`, `gridX`, `gridY` from the response |
+| `MARINE_ALERT_ZONES` | NWS marine alert zones | [weather.gov/lmk/zones](https://www.weather.gov/gis/MarineZones) or `https://api.weather.gov/alerts/active?area={state}` |
+| `UV_ZIP` | ZIP code for EPA UV forecast | Any ZIP near your sailing area |
+| `BAY_BUOY_STATION` | CBIBS buoy (optional) | [buoybay.noaa.gov](https://buoybay.noaa.gov/) — Chesapeake Bay only; leave blank if outside the Bay |
+
+Also update `DASHBOARD_LOCATION` (lat/lon of your marina), `DASHBOARD_TIME_ZONE`
+(IANA tz string, e.g. `"America/Chicago"`), and the `POLAR_*` table and
+`KEEL_DRAFT_FT` / `CHARTED_DEPTH_MLLW` to match your boat.
+
 ### CBIBS API key
 
-`src/config.js` ships a **public, free-tier** CBIBS (Chesapeake Bay buoy) API
-key. Because this is a static site the key is necessarily visible in client-side
-code; it grants no access to this project's infrastructure. If you fork this,
-please request your own free key rather than reusing it, so you're not sharing a
-rate limit: <https://buoybay.noaa.gov/data/api>.
+CBIBS buoys cover the Chesapeake Bay only. `src/config.js` ships with
+`CBIBS_API_KEY = ""` — if you sail the Bay, request a free key and paste it
+here: <https://buoybay.noaa.gov/data/api>. The key is necessarily visible in
+client-side code; it grants no access to this project's infrastructure.
+If you're outside the Bay, leave the key blank and set `BAY_BUOY_STATION` to
+use an NDBC station instead.
 
 ## Develop & test
 

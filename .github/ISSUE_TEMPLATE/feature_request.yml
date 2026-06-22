@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest an improvement or new capability
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests are welcome, especially ones that make the dashboard easier to adapt for other boats and locations. Large changes are more likely to be accepted if you describe the use case first.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the situation where this would help.
+      placeholder: "When sailing single-handed I often want to see X without having to …"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like the dashboard to do?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Adaptability / config (easier to fork for other boats/locations)
+        - New data source
+        - Recommendation / sail logic improvement
+        - UI / display improvement
+        - Developer experience / testing
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Are there other approaches you thought about?
+    validations:
+      required: false
