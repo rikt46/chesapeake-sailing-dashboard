@@ -83,6 +83,22 @@ import {
 } from "./src/bay_buoy.js";
 
 import {
+  isHardMarineAlert,
+  isSmallCraftAdvisory,
+  getMarineAlertsForDay,
+  getMarineAlertWindow,
+  summarizeMarineAlert,
+  isStormRelatedAlert,
+  getStormOutlookForDay,
+  parseCoastalWatersForecast,
+  parseMarineForecastText,
+  getMarineForecastForDay,
+  cleanMarineConditionText,
+} from "./src/marine.js";
+
+import { fetchMarineAlerts, fetchMarineForecasts } from "./src/marine_fetchers.js";
+
+import {
   NOAA_CURRENT_STATION,
   NWS_MARINE_OFFICE,
   CBIBS_API_KEY,
@@ -999,51 +1015,8 @@ import {
   // fetchTides, fetchTideHourly, fetchCurrentPredictions, fetchCurrentWind,
   // fetchAirTemp, fetchWaterTemp, fetchWaterLevel, fetchForecast,
   // fetchHourlyForecast) live in src/fetchers.js (imported above).
-  // The marine fetchers below stay here until src/marine.js is extracted —
-  // they depend on parsers (parseCoastalWatersForecast, getBayBuoySummary,
-  // ndbcLatestToCbibsVariables) that remain in this file.
-
-  async function fetchMarineAlerts(options = {}) {
-    const responses = await Promise.all(MARINE_ALERT_ZONES.map((zone) =>
-      fetch(buildRequestUrl(`https://api.weather.gov/alerts/active?zone=${zone}`, options.forceRefresh), {
-        cache: options.forceRefresh ? "no-store" : "default",
-        headers: { "User-Agent": "TolchesterSailingDashboard" },
-      }).then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-    ));
-
-    const seen = new Set();
-    const features = responses
-      .flatMap((payload) => Array.isArray(payload.features) ? payload.features : [])
-      .filter((feature) => {
-        const id = feature.id || feature.properties?.id || feature.properties?.event || JSON.stringify(feature.properties || {});
-        if (seen.has(id)) return false;
-        seen.add(id);
-        return true;
-      });
-
-    return { features };
-  }
-
-  async function fetchMarineForecasts(options = {}) {
-    const list = await fetchJSON(`https://api.weather.gov/products/types/CWF/locations/${NWS_MARINE_OFFICE}`, options);
-    const latest = (list && list["@graph"] || [])
-      .filter((product) => product && product.id)
-      .sort((a, b) => parseSourceDate(b.issuanceTime) - parseSourceDate(a.issuanceTime))[0];
-
-    if (!latest) throw new Error("No NWS CWF marine forecast products available");
-
-    const product = await fetchJSON(`https://api.weather.gov/products/${latest.id}`, options);
-    const zones = parseCoastalWatersForecast(product.productText || "", product.issuanceTime);
-
-    if (zones.length === 0) {
-      throw new Error("No marine zone forecasts available");
-    }
-
-    return { zones, productId: latest.id, updated: product.issuanceTime || latest.issuanceTime || null };
-  }
+  // The marine fetchers now live in src/marine_fetchers.js; the
+  // parsers they depend on live in src/marine.js.
 
   // ========== HELPERS ==========
   // Pure utility functions live in src/helpers.js (imported above).
@@ -1056,27 +1029,6 @@ import {
     if (f.includes("likely") && (f.includes("rain") || f.includes("shower"))) return 2;
     if (f.includes("rain") || f.includes("shower")) return 1;
     return 0;
-  }
-
-  const HARD_MARINE_ALERT_EVENTS = [
-    "Gale Warning",
-    "Storm Warning",
-    "Hurricane Force Wind Warning",
-    "Special Marine Warning",
-    "Low Water Advisory",
-    "Dense Fog Advisory",
-    "Hazardous Seas Warning",
-  ];
-
-  function isHardMarineAlert(eventName) {
-    if (!eventName) return false;
-    return HARD_MARINE_ALERT_EVENTS.some((event) => eventName.toLowerCase().includes(event.toLowerCase()));
-  }
-
-  function isSmallCraftAdvisory(eventName) {
-    if (!eventName) return false;
-    const normalized = eventName.toLowerCase();
-    return normalized.includes("small craft advisory") || normalized === "sca";
   }
 
   function shouldSmallCraftAdvisoryForceHarbor(day) {
@@ -1095,259 +1047,6 @@ import {
     if (shouldSmallCraftAdvisoryForceHarbor(day)) return findSailPlan("harbor-only");
     if (sailPlan.key === "full-sail" || sailPlan.key === "roll-genoa") return findSailPlan("first-reef");
     return sailPlan;
-  }
-
-  function getMarineAlertWindow(feature) {
-    const props = feature && feature.properties ? feature.properties : {};
-    const start = parseSourceDate(props.onset || props.effective || props.sent);
-    const end = parseSourceDate(props.ends || props.expires);
-    return { start, end };
-  }
-
-  function getMarineAlertsForDay(marineAlerts, dateStr) {
-    if (!marineAlerts || !Array.isArray(marineAlerts.features)) return [];
-
-    const { dayStart, dayEnd } = getDayBounds(dateStr);
-
-    return marineAlerts.features.filter((feature) => {
-      const props = feature.properties || {};
-      if (!isHardMarineAlert(props.event) && !isSmallCraftAdvisory(props.event)) return false;
-
-      const { start, end } = getMarineAlertWindow(feature);
-      const alertStart = start || dayStart;
-      const alertEnd = end || dayEnd;
-
-      return alertStart <= dayEnd && alertEnd >= dayStart;
-    });
-  }
-
-  function summarizeMarineAlert(feature) {
-    const props = feature && feature.properties ? feature.properties : {};
-    return props.event || "Marine alert";
-  }
-
-  const STORM_ALERT_EVENTS = [
-    "Special Marine Warning",
-    "Marine Weather Statement",
-    "Severe Thunderstorm Warning",
-    "Severe Thunderstorm Watch",
-    "Tornado Warning",
-    "Tornado Watch",
-  ];
-
-  function isStormRelatedAlert(eventName) {
-    if (!eventName) return false;
-    return STORM_ALERT_EVENTS.some((event) => eventName.toLowerCase().includes(event.toLowerCase()));
-  }
-
-  function getStormAlertsForDay(marineAlerts, dateStr) {
-    if (!marineAlerts || !Array.isArray(marineAlerts.features)) return [];
-
-    const { dayStart, dayEnd } = getDayBounds(dateStr);
-
-    return marineAlerts.features.filter((feature) => {
-      const props = feature.properties || {};
-      if (!isStormRelatedAlert(props.event)) return false;
-
-      const { start, end } = getMarineAlertWindow(feature);
-      const alertStart = start || dayStart;
-      const alertEnd = end || dayEnd;
-
-      return alertStart <= dayEnd && alertEnd >= dayStart;
-    });
-  }
-
-  function isThunderForecastText(value) {
-    const text = String(value || "").toLowerCase();
-    return text.includes("thunder") || text.includes("tstorm") || text.includes("lightning");
-  }
-
-  function getThunderPeriodsForDay(hourlyPeriods, dateStr) {
-    if (!Array.isArray(hourlyPeriods)) return [];
-    return hourlyPeriods.filter((period) => {
-      const start = new Date(period.startTime);
-      if (Number.isNaN(start.getTime())) return false;
-      const hour = zonedHour(start);
-      return period.startTime.startsWith(dateStr)
-        && hour >= 8
-        && hour <= 20
-        && isThunderForecastText(`${period.shortForecast || ""} ${period.detailedForecast || ""}`);
-    });
-  }
-
-  function getStormOutlookForDay(hourlyPeriods, marineAlerts, dateStr) {
-    const stormAlerts = getStormAlertsForDay(marineAlerts, dateStr);
-    const thunderPeriods = getThunderPeriodsForDay(hourlyPeriods, dateStr);
-    const firstThunder = thunderPeriods[0] || null;
-    const firstAlert = stormAlerts[0] || null;
-    const alertName = firstAlert ? summarizeMarineAlert(firstAlert) : "";
-
-    if (alertName && isHardMarineAlert(alertName)) {
-      return {
-        level: "alert",
-        status: "Active Warning",
-        statusNote: alertName,
-        thunder: firstThunder ? formatHour12(firstThunder.startTime) : "Check radar",
-        thunderNote: firstThunder ? firstThunder.shortForecast : "Warning active; check radar before departure",
-        alert: alertName,
-        alertNote: "Active NWS storm/marine warning",
-      };
-    }
-
-    if (alertName || firstThunder) {
-      return {
-        level: "watch",
-        status: "Watch",
-        statusNote: alertName || "Thunder mentioned in the hourly forecast",
-        thunder: firstThunder ? formatHour12(firstThunder.startTime) : "Not timed",
-        thunderNote: firstThunder ? firstThunder.shortForecast : "Storm-related marine statement active",
-        alert: alertName || "None active",
-        alertNote: alertName ? "NWS storm-related statement" : "No active squall warning",
-      };
-    }
-
-    return {
-      level: "clear",
-      status: "No Signal",
-      statusNote: "No thunder wording or storm marine alert for selected day",
-      thunder: "None shown",
-      thunderNote: "Still check radar before casting off",
-      alert: "None active",
-      alertNote: "No active squall warning",
-    };
-  }
-
-  function parseCoastalWatersForecast(productText, updated) {
-    const text = String(productText || "").replace(/\r\n/g, "\n");
-    const blocks = text.split(/\n\$\$\s*/);
-
-    return MARINE_FORECAST_ZONES.map((zone) => {
-      const block = blocks.find((candidate) => candidate.includes(`${zone.id}-`));
-      if (!block) return null;
-
-      const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
-      const zoneIndex = lines.findIndex((line) => line.startsWith(`${zone.id}-`));
-      const label = lines[zoneIndex + 1] && !/^\d{3,4}\s/.test(lines[zoneIndex + 1])
-        ? lines[zoneIndex + 1].replace(/-$/, "")
-        : zone.label;
-      const periods = [];
-      let current = null;
-
-      lines.slice(zoneIndex + 1).forEach((line) => {
-        const periodMatch = line.match(/^\.(.+?)\.\.\.(.+)$/);
-        if (periodMatch) {
-          if (current) periods.push(current);
-          current = {
-            name: cleanMarineConditionText(periodMatch[1]).replace(/\.$/, ""),
-            detailedForecast: cleanMarineConditionText(periodMatch[2]),
-          };
-          return;
-        }
-
-        if (current && !line.startsWith("...") && !line.startsWith("Winds and waves higher")) {
-          current.detailedForecast = cleanMarineConditionText(`${current.detailedForecast} ${line}`);
-        }
-      });
-
-      if (current) periods.push(current);
-
-      return {
-        id: zone.id,
-        label,
-        updated,
-        periods,
-      };
-    }).filter((zone) => zone && zone.periods.length > 0);
-  }
-
-  function cleanMarineConditionText(value) {
-    return String(value || "")
-      .replace(/\s+/g, " ")
-      .replace(/\.$/, "")
-      .trim();
-  }
-
-  function extractMarineCondition(text, patterns) {
-    const clean = cleanMarineConditionText(text);
-    for (const pattern of patterns) {
-      const match = clean.match(pattern);
-      if (match) return cleanMarineConditionText(match[0]);
-    }
-    return "";
-  }
-
-  function parseMarineForecastText(text) {
-    const waves = extractMarineCondition(text, [
-      /\b(?:waves|seas)\s+(?:(?:around|near|less than|up to)\s+)?\d+(?:\s*(?:to|-)\s*\d+)?\s*(?:ft|feet|foot)(?:\s+or\s+less)?\b/i,
-      /\b(?:waves|seas)\s+(?:flat|calm)\b/i,
-    ]);
-    const visibility = extractMarineCondition(text, [
-      /\b(?:visibility|vsby)\s+(?:(?:around|near|less than|up to)\s+)?\d+(?:\s*(?:to|-)\s*\d+)?\s*(?:nm|nautical miles?|sm|mi|miles?)(?:\s+or\s+less)?\b/i,
-      /\b(?:patchy|areas of|dense)\s+fog\b/i,
-    ]);
-
-    return {
-      waves: waves || "Not mentioned",
-      visibility: visibility || "Not restricted",
-      visibilityRestricted: Boolean(visibility),
-    };
-  }
-
-  function periodOverlapsDate(period, dateStr) {
-    if (!period || !period.startTime) {
-      return marinePeriodNameMatchesDate(period && period.name, dateStr);
-    }
-
-    if (!period || !period.startTime) return false;
-    const { dayStart, dayEnd } = getDayBounds(dateStr);
-    const start = new Date(period.startTime);
-    const end = period.endTime ? new Date(period.endTime) : start;
-    if (Number.isNaN(start.getTime())) return false;
-    return start <= dayEnd && end >= dayStart;
-  }
-
-  function marinePeriodNameMatchesDate(name, dateStr) {
-    const label = String(name || "").toLowerCase();
-    if (!label) return false;
-    const todayKey = getDateContext().todayKey;
-    if (dateStr === todayKey && label.includes("today")) return true;
-    if (dateStr === todayKey && label.includes("tonight")) return true;
-
-    // Use UTC noon + UTC formatting so the weekday reflects the calendar date
-    // itself, not the viewer's local zone near midnight.
-    const date = new Date(`${dateStr}T12:00:00Z`);
-    if (Number.isNaN(date.getTime())) return false;
-    const shortDay = date.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" }).toLowerCase();
-    const longDay = date.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" }).toLowerCase();
-    return label.startsWith(shortDay) || label.startsWith(longDay);
-  }
-
-  function getMarineForecastForDay(marineForecasts, dateStr) {
-    if (!marineForecasts || !Array.isArray(marineForecasts.zones)) return null;
-
-    for (const zone of marineForecasts.zones) {
-      const periods = (zone.periods || []).filter((period) => periodOverlapsDate(period, dateStr));
-      if (periods.length === 0) continue;
-
-      const daytime = periods.find((period) => {
-        const start = new Date(period.startTime);
-        return !Number.isNaN(start.getTime()) && start.getHours() >= 6 && start.getHours() <= 18;
-      }) || periods[0];
-      const text = daytime.detailedForecast || daytime.shortForecast || "";
-      const parsed = parseMarineForecastText(text);
-
-      return {
-        zoneId: zone.id,
-        zoneLabel: zone.label,
-        periodName: daytime.name || "Selected day",
-        text,
-        waves: parsed.waves,
-        visibility: parsed.visibility,
-        visibilityRestricted: parsed.visibilityRestricted,
-      };
-    }
-
-    return null;
   }
 
   // ========== TIDE PHASE HELPER ==========
