@@ -75,3 +75,42 @@ export function formatHour12(isoStr) {
   const d = new Date(isoStr);
   return d.toLocaleTimeString("en-US", { hour: "numeric", hour12: true });
 }
+
+export function toRadians(value) {
+  return (value * Math.PI) / 180;
+}
+
+export function joinNonEmpty(parts, separator = " · ") {
+  return parts.filter(Boolean).join(separator);
+}
+
+export function truncateText(value, maxLength = 180) {
+  if (!value) return "";
+  const clean = String(value).replace(/\s+/g, " ").trim();
+  if (clean.length <= maxLength) return clean;
+  return `${clean.slice(0, maxLength - 1).trimEnd()}…`;
+}
+
+export function formatDateRange(startDate, endDate) {
+  const format = (date) => date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+  if (startDate && endDate) {
+    return `${format(startDate)} - ${format(endDate)}`;
+  }
+  if (startDate) {
+    return `From ${format(startDate)}`;
+  }
+  if (endDate) {
+    return `Until ${format(endDate)}`;
+  }
+  return "Active now";
+}
+
+export function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
