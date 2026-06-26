@@ -105,6 +105,13 @@ export function getCurrentPredictionPhase(currentPredictions, dateStr, hour) {
   return { ...phase, source: "NOAA current prediction" };
 }
 
+export function currentEventLabel(event) {
+  if (!event) return "--";
+  const type = event.type === "slack" ? "Slack" : event.type === "flood" ? "Max flood" : "Max ebb";
+  const speed = event.speed !== null && event.type !== "slack" ? ` ${event.speed.toFixed(1)} kt` : "";
+  return `${type}${speed}`;
+}
+
 export function summarizeCurrentPrediction(currentPredictions, dateStr) {
   const events = normalizeCurrentPredictionEvents(currentPredictions)
     .filter((event) => fmtDate(event.time) === dateStr);
