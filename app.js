@@ -43,6 +43,7 @@ import {
   celsiusToFahrenheit,
   getWeatherIcon,
   parseNoaaTime,
+  parseSourceDate,
   formatTime12,
   formatHour12,
 } from "./src/helpers.js";
@@ -62,8 +63,19 @@ import {
 } from "./src/fetchers.js";
 
 import {
+  fetchUvIndex,
+  normalizeUvForecast,
+  getUvForDay,
+} from "./src/uv.js";
+
+import {
+  normalizeCurrentPredictionEvents,
+  getCurrentPredictionPhase,
+  summarizeCurrentPrediction,
+} from "./src/current_predictions.js";
+
+import {
   NOAA_CURRENT_STATION,
-  UV_ZIP,
   NWS_MARINE_OFFICE,
   CBIBS_API_KEY,
   BAY_BUOY_STATION,
@@ -729,13 +741,6 @@ import {
   // Date context state + refreshDateContext/getDateContext — in src/dates.js.
   // The module initialises the window at import time (refreshDateContext(true)).
 
-  function parseSourceDate(value) {
-    if (!value) return null;
-    const sourceValue = String(value);
-    const normalizedValue = sourceValue.replace(/([+-]\d{2})$/, "$1:00");
-    const parsed = sourceValue.includes(" ") ? parseNoaaTime(sourceValue) : new Date(normalizedValue);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
 
   function getSourcePrimaryTimestamp(sourceKey, payload) {
     if (!payload) return null;
@@ -1032,13 +1037,6 @@ import {
     return { zones, productId: latest.id, updated: product.issuanceTime || latest.issuanceTime || null };
   }
 
-  function fetchUvIndex(options = {}) {
-    return fetchJSON(
-      `https://data.epa.gov/efservice/getEnvirofactsUVHOURLY/ZIP/${UV_ZIP}/JSON`,
-      options
-    );
-  }
-
   async function fetchBayBuoyObservations(options = {}) {
     try {
       const cbibsPayload = await fetchJSON(
@@ -1281,110 +1279,6 @@ import {
     };
   }
 
-  function normalizeCurrentEventType(value) {
-    const text = String(value || "").toLowerCase();
-    if (text.includes("slack")) return "slack";
-    if (text.includes("flood")) return "flood";
-    if (text.includes("ebb")) return "ebb";
-    return "";
-  }
-
-  function normalizeCurrentPredictionEvents(payload) {
-    const candidates = [
-      payload?.current_predictions?.cp,
-      payload?.current_predictions,
-      payload?.predictions,
-      payload?.cp,
-      payload,
-    ];
-    const rows = candidates.find((candidate) => Array.isArray(candidate)) || [];
-
-    return rows.map((row) => {
-      const rawTime = row.Time || row.time || row.t || row.DateTime || row.DATE_TIME;
-      const time = rawTime ? parseSourceDate(String(rawTime)) : null;
-      const type = normalizeCurrentEventType(row.Type || row.type || row.Event || row.event);
-      const rawSpeed = row.Velocity_Major ?? row.velocity_major ?? row.Speed ?? row.speed ?? row.Velocity ?? row.v;
-      const speed = rawSpeed === undefined || rawSpeed === "" ? null : Math.abs(Number(rawSpeed));
-      const meanFloodDir = Number(row.meanFloodDir ?? row.MeanFloodDir ?? row.MEAN_FLOOD_DIR);
-      const meanEbbDir = Number(row.meanEbbDir ?? row.MeanEbbDir ?? row.MEAN_EBB_DIR);
-      if (!time || Number.isNaN(time.getTime()) || !type) return null;
-      return {
-        time,
-        type,
-        speed: Number.isFinite(speed) ? speed : null,
-        meanFloodDir: Number.isFinite(meanFloodDir) ? meanFloodDir : null,
-        meanEbbDir: Number.isFinite(meanEbbDir) ? meanEbbDir : null,
-      };
-    }).filter(Boolean).sort((a, b) => a.time - b.time);
-  }
-
-  function getCurrentDirectionLabel(event, phase) {
-    if (phase === "ebb") {
-      return Number.isFinite(event && event.meanEbbDir) ? degToCard(event.meanEbbDir) : NOAA_CURRENT_STATION.ebbDir;
-    }
-    if (phase === "flood") {
-      return Number.isFinite(event && event.meanFloodDir) ? degToCard(event.meanFloodDir) : NOAA_CURRENT_STATION.floodDir;
-    }
-    return "";
-  }
-
-  function getCurrentPhaseFromEvents(events, targetTime) {
-    if (!events || events.length === 0 || !targetTime) return null;
-
-    let previous = null;
-    let next = null;
-    for (const event of events) {
-      if (event.time <= targetTime) previous = event;
-      if (event.time > targetTime) {
-        next = event;
-        break;
-      }
-    }
-
-    if (!previous && next) {
-      const phase = next.type === "ebb" ? "ebb" : next.type === "flood" ? "flood" : "slack";
-      return { phase, currentDir: getCurrentDirectionLabel(next, phase), previous, next };
-    }
-    if (!previous) return null;
-
-    if (previous.type === "slack") {
-      const phase = next && next.type !== "slack" ? next.type : "slack";
-      return { phase, currentDir: getCurrentDirectionLabel(next || previous, phase), previous, next };
-    }
-
-    return {
-      phase: previous.type,
-      currentDir: getCurrentDirectionLabel(previous, previous.type),
-      speed: previous.speed,
-      previous,
-      next,
-    };
-  }
-
-  function getCurrentPredictionPhase(currentPredictions, dateStr, hour) {
-    const events = normalizeCurrentPredictionEvents(currentPredictions);
-    if (events.length === 0) return null;
-    const targetTime = new Date(`${dateStr}T${String(hour).padStart(2, "0")}:00:00`);
-    const phase = getCurrentPhaseFromEvents(events, targetTime);
-    if (!phase) return null;
-    return { ...phase, source: "NOAA current prediction" };
-  }
-
-  function summarizeCurrentPrediction(currentPredictions, dateStr) {
-    const events = normalizeCurrentPredictionEvents(currentPredictions)
-      .filter((event) => fmtDate(event.time) === dateStr);
-    const targetHour = dateStr === fmtDate(new Date()) ? new Date().getHours() : 13;
-    const phase = getCurrentPredictionPhase(currentPredictions, dateStr, targetHour);
-    const nextTurn = events.find((event) => event.time > new Date(`${dateStr}T${String(targetHour).padStart(2, "0")}:00:00`)) || null;
-
-    return {
-      events,
-      phase,
-      nextTurn,
-      hasPrediction: events.length > 0,
-    };
-  }
-
   const STORM_ALERT_EVENTS = [
     "Special Marine Warning",
     "Marine Weather Statement",
@@ -1607,46 +1501,6 @@ import {
     }
 
     return null;
-  }
-
-  function normalizeUvForecast(payload) {
-    const rows = Array.isArray(payload) ? payload : [];
-    return rows.map((row) => {
-      const rawDate = row.DATE_TIME || row.date_time || row.Date_Time || row.DATE || "";
-      const rawValue = row.UV_VALUE ?? row.uv_value ?? row.UV_INDEX ?? row.Index;
-      const value = Number(rawValue);
-      const normalizedDate = String(rawDate).replace(" ", "T");
-      const dateTime = normalizedDate ? new Date(normalizedDate) : null;
-      if (!Number.isFinite(value) || !dateTime || Number.isNaN(dateTime.getTime())) return null;
-      return { dateTime, value };
-    }).filter(Boolean);
-  }
-
-  function describeUvRisk(value) {
-    if (!Number.isFinite(value)) return "Unavailable";
-    if (value >= 11) return "Extreme";
-    if (value >= 8) return "Very high";
-    if (value >= 6) return "High";
-    if (value >= 3) return "Moderate";
-    return "Low";
-  }
-
-  function getUvForDay(uvForecast, dateStr) {
-    const rows = normalizeUvForecast(uvForecast).filter((item) => {
-      const itemDate = fmtDate(item.dateTime);
-      const hour = item.dateTime.getHours();
-      return itemDate === dateStr && hour >= 10 && hour <= 16;
-    });
-
-    if (rows.length === 0) return null;
-
-    const peak = rows.reduce((max, item) => item.value > max.value ? item : max, rows[0]);
-    return {
-      peak: Math.round(peak.value),
-      risk: describeUvRisk(peak.value),
-      warning: peak.value >= 3,
-      timeLabel: formatClockLabel(peak.dateTime),
-    };
   }
 
   // ========== TIDE PHASE HELPER ==========

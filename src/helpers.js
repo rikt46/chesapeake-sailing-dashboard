@@ -57,6 +57,16 @@ export function parseNoaaTime(tStr) {
   return new Date(y, m - 1, d, hh, mm);
 }
 
+// Parse a date string that may be either ISO 8601 (with optional offset) or
+// NOAA's "YYYY-MM-DD HH:mm" format. Returns null for unparseable input.
+export function parseSourceDate(value) {
+  if (!value) return null;
+  const sourceValue = String(value);
+  const normalizedValue = sourceValue.replace(/([+-]\d{2})$/, "$1:00");
+  const parsed = sourceValue.includes(" ") ? parseNoaaTime(sourceValue) : new Date(normalizedValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 export function formatTime12(date) {
   return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 }
