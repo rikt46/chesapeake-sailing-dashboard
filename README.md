@@ -118,6 +118,52 @@ The whole AWS footprint is Terraform in [`infra/`](infra/). In short:
 
 See [`infra/README.md`](infra/README.md) for the full walkthrough.
 
+### NOAA chart-tile cache
+
+The sailing-area map can use NOAA Marine Chart tiles stored at
+`chart-cache/noaa/` on the site. The cache is optional. Without a usable
+cache the map shows live NOAA Marine Chart tiles
+(`NOAA_CHART_TILE_URL` in [`src/config.js`](src/config.js)).
+`initNauticalMap` in [`src/init.js`](src/init.js) takes that live path when
+`chart-cache/noaa/manifest.json` is missing or not JSON, when `tileCount` is
+missing or 0, when a HEAD request for the tile at `DASHBOARD_LOCATION` and
+the map's current zoom does not succeed, and when a local tile later fails
+(`tileerror`). A tile error removes the local layer and leaves the map on
+the live layer.
+
+[`scripts/sync_noaa_chart_cache.mjs`](scripts/sync_noaa_chart_cache.mjs)
+downloads the tiles. Coverage is hard-coded in that script, not read from
+`DASHBOARD_LOCATION`: center 39.2085, -76.2455, a 50 NM radius at zooms
+10-12, and a 12 NM radius at zooms 13-15. The center matches
+`DASHBOARD_LOCATION` in `src/config.js` today; the radii exist only in the
+sync script. Files are
+`chart-cache/noaa/{z}/{y}/{x}.png` (web-mercator zoom, the same `{z}` the
+page requests) plus `chart-cache/noaa/manifest.json`. On the hosted site that
+directory is `/chart-cache/noaa/`. Local tiles are used only when the
+manifest loads, `tileCount` is greater than 0, and that HEAD request
+succeeds.
+
+Populate the cache by hand with the same script the scheduled workflow runs.
+Each invocation attempts one tile and rewrites `manifest.json`. `tileCount`
+in that file is the size of the coverage list, not the number of PNGs on
+disk. The script chooses the tile from a 10-minute time slot, so another run
+inside the same window selects the same tile.
+
+```bash
+node ./scripts/sync_noaa_chart_cache.mjs
+```
+
+`CHART_CACHE_DIR` sets the script's output directory. The default is
+`chart-cache/noaa`, which is the path the page reads. [`deploy.sh`](deploy.sh)
+syncs the repo root, and `chart-cache/` is outside its exclude list, so PNGs
+and `manifest.json` already on disk are uploaded with the site.
+
+To refresh on a schedule and publish the directory to S3, copy the workflow
+template in
+[`docs/AUTOMATION.md`](docs/AUTOMATION.md#2-refresh-the-noaa-chart-tile-cache-scheduled).
+Add it to your own fork. This repo's only workflow is
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
 > **Note:** this public repo ships only a read-only CI workflow
 > ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) that runs tests and
 > lint. Nothing deploys automatically when you fork it. The deploy and chart-cache
