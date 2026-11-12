@@ -9,6 +9,9 @@
 import fs from "node:fs";
 import { JSDOM } from "jsdom";
 import { dashboardTestExports as dashboard } from "./app.js";
+import { startAutoRefresh } from "./src/init.js";
+import { getCachedData, setCachedData } from "./src/render.js";
+import { CONDITION_REFRESH_MS } from "./src/config.js";
 
 let pass = 0, fail = 0, warn = 0, skipped = 0;
 const failures = [];
@@ -1347,6 +1350,68 @@ run('Polar reference sheet includes a dashboard return link', () => {
   const source = fs.readFileSync(new URL('./Pearson 31-2 Polar Reference Sheet/index.html', import.meta.url), 'utf8');
   assert(source.includes('href="../index.html"'), 'Polar reference sheet is missing dashboard href');
   assert(source.includes('Back to Dashboard'), 'Polar reference sheet is missing dashboard link label');
+});
+
+section('Partial auto-refresh source statuses');
+
+async function partialRefreshStatuses() {
+  const prior = {
+    document: globalThis.document,
+    window: globalThis.window,
+    fetch: globalThis.fetch,
+    setInterval: globalThis.setInterval,
+    cachedData: getCachedData(),
+  };
+  const dom = new JSDOM(fs.readFileSync(new URL('./index.html', import.meta.url), 'utf8'));
+  const callbacks = new Map();
+  const requests = [];
+  const now = new Date();
+  const failedForecast = buildSourceStatus('forecast', null, now, new Error('offline'));
+  const oldWind = buildSourceStatus('currentWind', null, now, new Error('offline'));
+  try {
+    globalThis.document = dom.window.document;
+    globalThis.window = dom.window;
+    globalThis.setInterval = (callback, delay) => {
+      callbacks.set(delay, callback);
+      return callbacks.size;
+    };
+    globalThis.fetch = async (url) => {
+      requests.push(String(url));
+      // Exercise the normal CO-OPS fallback without making any network requests.
+      if (String(url).includes('ndbc.noaa.gov')) return { ok: false, status: 503 };
+      return {
+        ok: true,
+        json: async () => ({ data: [{ t: now.toISOString(), s: '10', g: '12', dr: 'E', v: '65' }] }),
+      };
+    };
+    setCachedData({ sourceStatuses: { forecast: failedForecast, currentWind: oldWind } });
+    startAutoRefresh();
+    const refresh = callbacks.get(CONDITION_REFRESH_MS);
+    assert(typeof refresh === 'function', 'condition refresh timer was registered');
+    await refresh();
+    assertEqual(requests.length, 5, 'only four condition sources plus the wind fallback were fetched');
+    assert(!requests.some(url => url.includes('api.weather.gov')), 'forecast was not refreshed');
+    return { statuses: getCachedData().sourceStatuses, failedForecast, oldWind };
+  } finally {
+    globalThis.document = prior.document;
+    globalThis.window = prior.window;
+    globalThis.fetch = prior.fetch;
+    globalThis.setInterval = prior.setInterval;
+    setCachedData(prior.cachedData);
+    dom.window.close();
+  }
+}
+
+await runAsync('Partial refresh preserves a failed source that was not fetched', async () => {
+  const { statuses, failedForecast } = await partialRefreshStatuses();
+  assertEqual(statuses.forecast?.state, 'failed', 'forecast failure survives');
+  assertEqual(statuses.forecast, failedForecast, 'original forecast status and details survive');
+});
+
+await runAsync('Partial refresh replaces the status of a refreshed source', async () => {
+  const { statuses, oldWind } = await partialRefreshStatuses();
+  assertEqual(statuses.currentWind.state, 'ok', 'fresh wind replaces its previous failure');
+  assert(statuses.currentWind !== oldWind, 'wind status was replaced');
 });
 
 // ─── Live API tests (opt-in via LIVE_API=1; warnings only — never block) ─────
