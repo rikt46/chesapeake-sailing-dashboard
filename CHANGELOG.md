@@ -5,6 +5,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+- README and the in-app MySailingPlan link no longer list sailability scoring
+  and current-opposition alerts as paid-only features, since this dashboard
+  already includes both
+
 ## [1.0.1] - 2026-06-22
 
 ### Added
