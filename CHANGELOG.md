@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- CI workflow running `npm test` under UTC and America/New_York, plus
+  `npm run lint`, on pull requests and pushes to `main`. Read-only, no secrets.
+
 ## [1.0.1] - 2026-06-22
 
 ### Added

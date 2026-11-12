@@ -114,8 +114,9 @@ The whole AWS footprint is Terraform in [`infra/`](infra/). In short:
 
 See [`infra/README.md`](infra/README.md) for the full walkthrough.
 
-> **Note:** this public repo ships **no GitHub Actions workflows**, so nothing
-> deploys or runs automatically when you fork it. The deploy and chart-cache
+> **Note:** this public repo ships only a read-only CI workflow
+> ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) that runs tests and
+> lint. Nothing deploys automatically when you fork it. The deploy and chart-cache
 > automation are provided as copy-paste templates in
 > [`docs/AUTOMATION.md`](docs/AUTOMATION.md) — add them to your own fork if you
 > want push-to-deploy.
