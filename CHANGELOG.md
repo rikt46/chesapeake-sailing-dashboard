@@ -5,11 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-12
+
+First tagged release since v1.0.0. It also carries the 1.0.1 changes below,
+which were never tagged on their own.
+
 ### Added
 - CI workflow running `npm test` under UTC and America/New_York, plus
   `npm run lint`, on pull requests and pushes to `main`. Read-only, no secrets.
   (#17)
 - `engines` field requiring Node.js 24 or newer, matching CI (#33)
+- Community health files: CONTRIBUTING, CODE_OF_CONDUCT, issue and pull
+  request templates, and a station-ID table in the README for forks
+- Regression test that a partial auto-refresh keeps the failure status of
+  sources it did not re-fetch (#34)
 
 ### Changed
 - Project renamed to **MySailingPlan Dashboard**, with Tolchester as the
@@ -24,8 +33,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Leaflet (#32)
 - SECURITY.md now states that only the latest release is supported
 - Contributor docs no longer hard-code the test count
+- Dev dependencies updated by Dependabot security bumps (`js-yaml`,
+  `brace-expansion`, `@humanfs/node`). Dev tooling only; nothing served to the
+  browser changed
 
-## [1.0.1] - 2026-06-22
+## 1.0.1 - 2026-06-22 (never tagged; shipped in 1.1.0)
 
 ### Added
 - MySailingPlan callout in README — hosted platform for any boat on the Chesapeake
@@ -61,3 +73,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Crew / safety mode toggles (solo, double, crewed; standard, conservative)
 - S3 + CloudFront hosting via Terraform (`infra/`)
 - GitHub Actions deploy template — OIDC, no stored AWS keys (`docs/AUTOMATION.md`)
+
+[Unreleased]: https://github.com/rikt46/chesapeake-sailing-dashboard/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/rikt46/chesapeake-sailing-dashboard/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/rikt46/chesapeake-sailing-dashboard/releases/tag/v1.0.0
