@@ -4,7 +4,12 @@ This is a personal, static sailing dashboard for the Pearson 31-2 on the
 Chesapeake Bay. It is a single-page site (HTML/CSS/vanilla JS) hosted on
 S3 + CloudFront; it has no backend, no user accounts, and stores no user data.
 Only the `main` branch is deployed, so the live site always reflects the latest
-commit — there are no separately maintained release versions.
+commit.
+
+## Supported Versions
+
+Only the latest release is supported. Fixes land on `main` and ship in the next
+release; older tags are not patched.
 
 ## Reporting a Vulnerability
 

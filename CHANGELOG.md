@@ -8,6 +8,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - CI workflow running `npm test` under UTC and America/New_York, plus
   `npm run lint`, on pull requests and pushes to `main`. Read-only, no secrets.
+  (#17)
+- `engines` field requiring Node.js 24 or newer, matching CI (#33)
+
+### Changed
+- Project renamed to **MySailingPlan Dashboard**, with Tolchester as the
+  configured location. Page title, header, manifest, README, deploy banner and
+  infra comments updated (#18)
+- MySailingPlan copy in the README and the in-app Reference card no longer
+  lists sailability scoring and current-opposition alerts as paid features,
+  since this dashboard already ships both (#19)
+- `app.js` split into focused `src/` modules. No behavior change (#12)
+- Issue templates apply the new triage labels (#31)
+- ESLint globals trimmed to the two libraries the page loads, Chart.js and
+  Leaflet (#32)
+- SECURITY.md now states that only the latest release is supported
+- Contributor docs no longer hard-code the test count
 
 ## [1.0.1] - 2026-06-22
 
