@@ -21,16 +21,10 @@ export default [
       sourceType: "module",
       globals: {
         ...globals.browser,
-        // CDN libraries referenced in website-building skill files
-        Chart: "readonly", d3: "readonly", gsap: "readonly", ScrollTrigger: "readonly",
-        THREE: "readonly", Motion: "readonly", Lenis: "readonly",
-        React: "readonly", ReactDOM: "readonly", Vue: "readonly",
-        Phaser: "readonly", PIXI: "readonly", p5: "readonly", Kaboom: "readonly",
-        L: "readonly", mapboxgl: "readonly",
-        anime: "readonly", Tone: "readonly", lottie: "readonly",
-        lucide: "readonly", SVG: "readonly", Snap: "readonly",
-        CANNON: "readonly", RAPIER: "readonly",
-        $: "readonly", jQuery: "readonly",
+        // Chart.js 4.4.1: index.html loads chart.umd.js from jsDelivr.
+        Chart: "readonly",
+        // Leaflet 1.9.4: index.html loads leaflet.js from unpkg.
+        L: "readonly",
       }
     },
     rules,
