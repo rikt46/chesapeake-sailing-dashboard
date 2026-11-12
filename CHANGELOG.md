@@ -33,9 +33,8 @@ which were never tagged on their own.
   Leaflet (#32)
 - SECURITY.md now states that only the latest release is supported
 - Contributor docs no longer hard-code the test count
-- Dev dependencies updated by Dependabot security bumps (`js-yaml`,
-  `brace-expansion`, `@humanfs/node`). Dev tooling only; nothing served to the
-  browser changed
+- Project scope documented in `docs/SCOPE.md` and linked from README and
+  CONTRIBUTING
 
 ## 1.0.1 - 2026-06-22 (never tagged; shipped in 1.1.0)
 
