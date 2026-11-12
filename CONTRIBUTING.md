@@ -20,14 +20,20 @@ required.
 
 ## What's in scope
 
-- **Bug fixes** — data parsing, recommendation logic, UI glitches
-- **Test coverage** — new tests for edge cases in `src/` modules
-- **Adaptability** — making `src/config.js` easier to fork for other boats/locations
-- **Documentation** — clearer fork guidance, correcting stale info
+This project stays a focused dashboard for one boat at one location. Read
+[`docs/SCOPE.md`](docs/SCOPE.md) before starting a feature.
 
-Out of scope: adding new data sources, redesigning the UI, or adding features
-that require a backend. If you have a feature idea, open a discussion issue
-first.
+- **Always welcome:** bug and accuracy fixes, tests, accessibility,
+  performance, documentation, security hardening, refactoring, and making
+  `src/config.js` easier to fork.
+- **Out of scope:** multiple boats or locations, accounts, saved plans, crew
+  sharing, departure-time search, polar import, notifications, anything that
+  needs a backend, and frameworks or a build step.
+- **Owner decides:** new data sources, UI redesign, offline mode.
+
+Changes to wind, gust, depth or alert thresholds, to stale or failed source
+display, or to the advisory disclaimer are safety-critical and need the
+owner's sign-off.
 
 ## Making a change
 
@@ -47,5 +53,6 @@ that looks wrong, and the expected vs. actual value.
 
 ## Suggesting a feature
 
-Open a **Feature request** issue. For larger changes, describe the use case
-before writing code — it's easier to redirect an idea than a diff.
+Check [`docs/SCOPE.md`](docs/SCOPE.md), then open a **Feature request** issue.
+Describe the use case before writing code — it's easier to redirect an idea
+than a diff.
