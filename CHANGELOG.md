@@ -24,6 +24,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Leaflet (#32)
 - SECURITY.md now states that only the latest release is supported
 - Contributor docs no longer hard-code the test count
+- Project scope documented in `docs/SCOPE.md` and linked from README and
+  CONTRIBUTING
 
 ## [1.0.1] - 2026-06-22
 

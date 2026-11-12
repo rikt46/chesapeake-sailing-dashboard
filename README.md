@@ -46,6 +46,9 @@ version. It adds:
 
 → [mysailingplan.com](https://mysailingplan.com)
 
+This repo stays a single-boat tool. [`docs/SCOPE.md`](docs/SCOPE.md) lists what
+belongs here and what doesn't.
+
 ---
 
 ## Make it your own
