@@ -5,10 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Changed
-- Renamed the project to **MySailingPlan Dashboard** in the page title, header,
-  web app manifest, README, deploy script, and infrastructure comments.
-  Tolchester stays the configured location and now appears in the header subtitle.
+### Added
+- CI workflow running `npm test` under UTC and America/New_York, plus
+  `npm run lint`, on pull requests and pushes to `main`. Read-only, no secrets.
 
 ## [1.0.1] - 2026-06-22
 
