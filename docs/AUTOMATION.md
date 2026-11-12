@@ -1,8 +1,9 @@
 # Automation (GitHub Actions)
 
-**This repository intentionally ships no GitHub Actions workflows**, so forking
-or pushing to it triggers nothing. The two workflows below are provided as
-copy-paste templates. Add whichever you want to your own fork under
+**This repository ships one GitHub Actions workflow, `ci.yml`**, which runs
+`npm test` (under UTC and America/New_York) and `npm run lint`. It needs no
+secrets and has read-only permissions. Nothing deploys automatically. The two
+deploy workflows below are provided as copy-paste templates. Add whichever you want to your own fork under
 `.github/workflows/`.
 
 Both use **GitHub OIDC** to assume an AWS IAM role — there are no long-lived AWS
