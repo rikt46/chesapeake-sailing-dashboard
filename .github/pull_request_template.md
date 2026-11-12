@@ -5,7 +5,7 @@ Brief description of the change.
 The motivation — what problem does this fix or what does it improve?
 
 ## Testing
-- [ ] `npm test` passes (115 tests)
+- [ ] `npm test` passes
 - [ ] `npm run lint` passes
 - [ ] Tested in browser (if UI change)
 
