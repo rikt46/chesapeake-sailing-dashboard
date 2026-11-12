@@ -26,18 +26,17 @@ backend and no build step — designed to be hosted on S3 + CloudFront.
 
 ## Want this for your boat?
 
-This dashboard is built for one specific boat and one stretch of water. If you
-want a hosted version that works with **any boat on any stretch of the
-Chesapeake**, [**MySailingPlan.com**](https://mysailingplan.com) offers a
-paid-tier dashboard with features that go beyond what a static single-boat page
-can provide:
+This dashboard is built for one specific boat and one stretch of water. It
+already gives that boat a sailability score and warns when wind and tidal
+current oppose each other. If you want the same approach for **any boat on any
+stretch of the Chesapeake**, without hosting anything yourself,
+[**MySailingPlan.com**](https://mysailingplan.com) is the hosted, paid
+version. It adds:
 
-- **Sailability scoring** — a 0–100 composite (speed + comfort + weather) so
-  you get one number instead of a stack of raw values to interpret
+- **Any boat, any location** — set up your own boat and home waters instead of
+  editing a config file and deploying a copy
 - **Departure window optimizer** — scans the next 7 days of NOAA forecasts and
   ranks leave times by your boat's polar, keel draft, and preferred wind angles
-- **Current-opposition alerts** — flags when wind and tidal current are setting
-  up opposing chop
 - **Crew preparedness** — hypothermia risk, PFD recommendations, and wind chill
   based on current water and air temperature
 - **Crew access** — invite crew with role-based permissions (captain, crew,
