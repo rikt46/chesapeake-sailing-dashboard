@@ -5,10 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Fixed
-- README and the in-app MySailingPlan link no longer list sailability scoring
-  and current-opposition alerts as paid-only features, since this dashboard
-  already includes both
+### Added
+- CI workflow running `npm test` under UTC and America/New_York, plus
+  `npm run lint`, on pull requests and pushes to `main`. Read-only, no secrets.
 
 ## [1.0.1] - 2026-06-22
 

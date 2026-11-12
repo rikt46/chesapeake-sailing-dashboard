@@ -1,4 +1,4 @@
-# Tolchester Sailing Dashboard — AWS Infrastructure
+# MySailingPlan Dashboard — AWS Infrastructure
 
 Static hosting on S3 + CloudFront, managed by Terraform. Automated deploys via GitHub Actions with OIDC (no stored AWS keys). Estimated cost for personal use: **< $0.50/month** after the free tier.
 

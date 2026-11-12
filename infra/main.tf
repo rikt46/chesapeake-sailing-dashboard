@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────
-# Tolchester Sailing Dashboard — AWS Static Hosting
+# MySailingPlan Dashboard — AWS Static Hosting
 #
 # Architecture:
 #   S3 (private) → CloudFront (OAC) → optional custom domain
@@ -240,7 +240,7 @@ resource "aws_cloudfront_distribution" "site" {
   is_ipv6_enabled = true
   # Serve the dashboard shell at the origin root only; do not rewrite asset 404s.
   default_root_object = "index.html"
-  comment             = "Tolchester Sailing Dashboard"
+  comment             = "MySailingPlan Dashboard"
   price_class         = "PriceClass_100" # US, Canada, Europe only — cheapest
 
   aliases = local.use_custom_domain ? [var.domain_name] : []

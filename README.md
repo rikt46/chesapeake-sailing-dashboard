@@ -1,4 +1,4 @@
-# Tolchester Sailing Dashboard
+# MySailingPlan Dashboard
 
 A personal, single-page sailing dashboard for a **Pearson 31-2** sailing the
 upper **Chesapeake Bay** out of Tolchester Beach, MD. It pulls live wind, tide,
@@ -11,7 +11,7 @@ backend and no build step — designed to be hosted on S3 + CloudFront.
 
 **Live demo:** <https://dashboard.sailingaurora.com>
 
-![Tolchester Sailing Dashboard — live conditions, a go/reduce-sail/no-go recommendation, and a color-coded 5-day outlook](docs/screenshot.png)
+![MySailingPlan Dashboard — live conditions, a go/reduce-sail/no-go recommendation, and a color-coded 5-day outlook](docs/screenshot.png)
 
 ## Tech overview
 
@@ -50,7 +50,9 @@ version. It adds:
 
 ## Make it your own
 
-This dashboard is hard-tuned to one boat and one stretch of water. To adapt it,
+This dashboard is hard-tuned to one boat and one stretch of water. If you fork
+it, give your copy its own name: MySailingPlan is the name of a commercial
+product, and the MIT license covers the code, not the name. To adapt it,
 edit [`src/config.js`](src/config.js) — it holds, in one place:
 
 - **Location & timezone** — `DASHBOARD_LOCATION`, `DASHBOARD_TIME_ZONE`.
@@ -113,8 +115,9 @@ The whole AWS footprint is Terraform in [`infra/`](infra/). In short:
 
 See [`infra/README.md`](infra/README.md) for the full walkthrough.
 
-> **Note:** this public repo ships **no GitHub Actions workflows**, so nothing
-> deploys or runs automatically when you fork it. The deploy and chart-cache
+> **Note:** this public repo ships only a read-only CI workflow
+> ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) that runs tests and
+> lint. Nothing deploys automatically when you fork it. The deploy and chart-cache
 > automation are provided as copy-paste templates in
 > [`docs/AUTOMATION.md`](docs/AUTOMATION.md) — add them to your own fork if you
 > want push-to-deploy.

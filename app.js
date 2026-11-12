@@ -1,5 +1,5 @@
 /* ==============================================
-   Tolchester Sailing Dashboard — app.js
+   MySailingPlan Dashboard — app.js
    Live data from NOAA and weather.gov
    Sail recommendations for Pearson 31-2
 
