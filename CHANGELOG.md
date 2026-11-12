@@ -5,6 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- Issue templates apply the new triage labels (`status: needs-triage`, `type: bug`); the `enhancement` label they used was retired
+
 ## [1.0.1] - 2026-06-22
 
 ### Added
