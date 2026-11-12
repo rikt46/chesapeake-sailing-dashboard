@@ -1,5 +1,5 @@
 {
-  "name": "Tolchester Sailing Dashboard",
+  "name": "MySailingPlan Dashboard",
   "short_name": "Sailing",
   "description": "Live Chesapeake Bay conditions and a go / reduce-sail / no-go recommendation for the Pearson 31-2.",
   "start_url": "./",
