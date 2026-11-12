@@ -9,6 +9,8 @@
 import fs from "node:fs";
 import { JSDOM } from "jsdom";
 import { dashboardTestExports as dashboard } from "./app.js";
+import { startAutoRefresh } from "./src/init.js";
+import { setCachedData, getCachedData } from "./src/render.js";
 
 let pass = 0, fail = 0, warn = 0, skipped = 0;
 const failures = [];
@@ -1426,6 +1428,103 @@ await runLive('Marine alerts (ANZ532) returns features array', async () => {
   const d = await r.json();
   assert(Array.isArray(d.features), 'features should be array');
   return `${d.features.length} active alerts`;
+});
+
+// ─── sourceStatuses survive a partial auto-refresh (issue #21) ────────────────
+//
+// Regression guard for the safety-critical case in issue #21: the condition
+// auto-refresh inside startAutoRefresh() (src/init.js) only refetches
+// currentWind / airTemp / waterTemp / waterLevel. It must merge those four
+// statuses INTO the previous sourceStatuses map, never replace the map —
+// otherwise a source that was failed (or stale) on the previous cycle drops
+// out of view, and a missing required source stops blocking recommendations.
+//
+// The test runs one partial refresh cycle for real, without waiting
+// CONDITION_REFRESH_MS and without touching the network: globalThis.setInterval
+// is swapped for a recorder so the interval callback is invoked directly, and
+// globalThis.fetch is stubbed with fixtures for the four sources.
+
+await runAsync('Partial auto-refresh keeps a failed source that was not refetched (issue #21)', async () => {
+  const priorDocument = globalThis.document;
+  const priorFetch = globalThis.fetch;
+  const priorSetInterval = globalThis.setInterval;
+  const priorCachedData = getCachedData();
+
+  // updateKPIs() writes to its KPI nodes unconditionally, so the harness
+  // document has to provide them; renderSourceStatus()/updateTimestamp()
+  // early-return when their nodes are absent, so they are left out.
+  const nodeIds = ['kpiWind', 'kpiWindDir', 'kpiGust', 'kpiGustNote', 'kpiAirTemp', 'kpiAirTempRange', 'kpiBsp', 'kpiBspNote', 'nowBarWind', 'nowBarWater', 'nowBarLevel'];
+  const dom = new JSDOM(`<body>${nodeIds.map((id) => `<div id="${id}"></div>`).join('')}</body>`);
+  globalThis.document = dom.window.document;
+
+  const scheduled = [];
+  globalThis.setInterval = (fn, ms) => { scheduled.push({ fn, ms }); return scheduled.length; };
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const now = new Date();
+  // NOAA CO-OPS stamps are local "YYYY-MM-DD HH:mm"; NDBC rows are UTC columns.
+  const noaaStamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const ndbcRow = `${pad(now.getUTCFullYear() % 100)} ${pad(now.getUTCMonth() + 1)} ${pad(now.getUTCDate())} ${pad(now.getUTCHours())} ${pad(now.getUTCMinutes())}`;
+  const ndbcText = `#YY MM DD hh mm WDIR WSPD GST\n${ndbcRow} 180 05.2 06.8\n`;
+
+  globalThis.fetch = async (url) => {
+    const target = String(url);
+    const jsonResponse = (body) => ({ ok: true, status: 200, json: async () => body, text: async () => JSON.stringify(body) });
+    if (target.includes('ndbc.noaa.gov')) {
+      return { ok: true, status: 200, json: async () => { throw new Error('NDBC serves plain text'); }, text: async () => ndbcText };
+    }
+    if (target.includes('product=air_temperature')) return jsonResponse({ data: [{ t: noaaStamp, v: '71.5' }] });
+    if (target.includes('product=water_temperature')) return jsonResponse({ data: [{ t: noaaStamp, v: '64.5' }] });
+    if (target.includes('product=water_level')) return jsonResponse({ data: [{ t: noaaStamp, v: '2.10' }] });
+    throw new Error(`Unexpected fetch in the issue #21 test: ${target}`);
+  };
+
+  const failedTides = { key: 'tides', label: 'NOAA tide predictions', state: 'failed', requiredForRecommendation: true, detail: 'Fetch failed at 10:00 AM', fetchedAt: new Date(now - 60000), primaryTimestamp: null, ageMs: null };
+  const staleWind = { key: 'currentWind', label: 'NDBC Tolchester Marina wind', state: 'stale', requiredForRecommendation: false, detail: 'Fetched 10:00 AM · NDBC realtime', fetchedAt: new Date(now - 60000), primaryTimestamp: null, ageMs: 5 * 60 * 60 * 1000 };
+  const okHourly = { key: 'hourlyForecast', label: 'NWS hourly forecast', state: 'ok', requiredForRecommendation: true, detail: 'Updated 10:00 AM · NWS forecast', fetchedAt: new Date(now - 60000), primaryTimestamp: new Date(now - 60000), ageMs: 60000 };
+
+  setCachedData({
+    sourceStatuses: { tides: failedTides, currentWind: staleWind, hourlyForecast: okHourly },
+    tides: null,
+    hourlyPeriods: [],
+    forecastPeriods: [],
+    recommendations: null,
+    currentWind: { data: [{ t: noaaStamp, s: '3.10', d: '090', dr: 'E', g: '4.00' }] },
+    waterTemp: null,
+    tideHourly: null,
+    gustRatio: 0.85,
+  });
+
+  try {
+    startAutoRefresh();
+    assert(scheduled.length >= 1, 'startAutoRefresh() should schedule the condition refresh interval');
+    await scheduled[0].fn();
+
+    const statuses = getCachedData().sourceStatuses;
+
+    // AC1 — a source that failed before the partial refresh is still there,
+    // still failed (not missing, not dropped).
+    assert(statuses.tides, 'tides status disappeared after a partial auto-refresh');
+    assertEqual(statuses.tides.state, 'failed', 'tides state after a partial auto-refresh');
+    assertEqual(statuses.tides.detail, failedTides.detail, 'tides detail after a partial auto-refresh');
+
+    // AC1 — a source outside this refresh cycle keeps its previous status too.
+    assert(statuses.hourlyForecast, 'hourlyForecast status disappeared after a partial auto-refresh');
+    assertEqual(statuses.hourlyForecast.state, 'ok', 'hourlyForecast state after a partial auto-refresh');
+
+    // AC2 — a source that WAS refetched has its status replaced with the new one.
+    assert(statuses.currentWind, 'currentWind status missing after a partial auto-refresh');
+    assertEqual(statuses.currentWind.state, 'ok', 'currentWind state after a partial auto-refresh');
+    assert(statuses.currentWind.fetchedAt.getTime() > staleWind.fetchedAt.getTime(), 'currentWind fetchedAt was not updated by the refresh');
+    assert(statuses.airTemp && statuses.waterTemp && statuses.waterLevel, 'the other three auto-refresh sources should be recorded');
+
+    return 'failed tides preserved; currentWind stale → ok';
+  } finally {
+    globalThis.fetch = priorFetch;
+    globalThis.setInterval = priorSetInterval;
+    globalThis.document = priorDocument;
+    setCachedData(priorCachedData);
+  }
 });
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
