@@ -6,6 +6,8 @@ welcome.
 
 ## Development setup
 
+Use Node.js 24 or newer. CI runs on Node.js 24.
+
 ```bash
 npm install        # dev deps only (eslint, jsdom) — no build step
 npm test           # unit test suite (115 tests)
