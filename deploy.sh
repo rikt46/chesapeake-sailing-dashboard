@@ -58,7 +58,7 @@ if [[ -z "$BUCKET" ]]; then
 fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Deploying Tolchester Sailing Dashboard"
+echo "  Deploying MySailingPlan Dashboard"
 echo "  Bucket:  s3://${BUCKET}"
 echo "  Dist ID: ${DIST_ID:-'(none)'}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

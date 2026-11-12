@@ -1,4 +1,4 @@
-# Tolchester Sailing Dashboard
+# MySailingPlan Dashboard
 
 A personal, single-page sailing dashboard for a **Pearson 31-2** sailing the
 upper **Chesapeake Bay** out of Tolchester Beach, MD. It pulls live wind, tide,
@@ -11,7 +11,7 @@ backend and no build step — designed to be hosted on S3 + CloudFront.
 
 **Live demo:** <https://dashboard.sailingaurora.com>
 
-![Tolchester Sailing Dashboard — live conditions, a go/reduce-sail/no-go recommendation, and a color-coded 5-day outlook](docs/screenshot.png)
+![MySailingPlan Dashboard — live conditions, a go/reduce-sail/no-go recommendation, and a color-coded 5-day outlook](docs/screenshot.png)
 
 ## Tech overview
 
@@ -26,18 +26,17 @@ backend and no build step — designed to be hosted on S3 + CloudFront.
 
 ## Want this for your boat?
 
-This dashboard is built for one specific boat and one stretch of water. If you
-want a hosted version that works with **any boat on any stretch of the
-Chesapeake**, [**MySailingPlan.com**](https://mysailingplan.com) offers a
-paid-tier dashboard with features that go beyond what a static single-boat page
-can provide:
+This dashboard is built for one specific boat and one stretch of water. It
+already gives that boat a sailability score and warns when wind and tidal
+current oppose each other. If you want the same approach for **any boat on any
+stretch of the Chesapeake**, without hosting anything yourself,
+[**MySailingPlan.com**](https://mysailingplan.com) is the hosted, paid
+version. It adds:
 
-- **Sailability scoring** — a 0–100 composite (speed + comfort + weather) so
-  you get one number instead of a stack of raw values to interpret
+- **Any boat, any location** — set up your own boat and home waters instead of
+  editing a config file and deploying a copy
 - **Departure window optimizer** — scans the next 7 days of NOAA forecasts and
   ranks leave times by your boat's polar, keel draft, and preferred wind angles
-- **Current-opposition alerts** — flags when wind and tidal current are setting
-  up opposing chop
 - **Crew preparedness** — hypothermia risk, PFD recommendations, and wind chill
   based on current water and air temperature
 - **Crew access** — invite crew with role-based permissions (captain, crew,
@@ -51,7 +50,9 @@ can provide:
 
 ## Make it your own
 
-This dashboard is hard-tuned to one boat and one stretch of water. To adapt it,
+This dashboard is hard-tuned to one boat and one stretch of water. If you fork
+it, give your copy its own name: MySailingPlan is the name of a commercial
+product, and the MIT license covers the code, not the name. To adapt it,
 edit [`src/config.js`](src/config.js) — it holds, in one place:
 
 - **Location & timezone** — `DASHBOARD_LOCATION`, `DASHBOARD_TIME_ZONE`.
@@ -114,8 +115,9 @@ The whole AWS footprint is Terraform in [`infra/`](infra/). In short:
 
 See [`infra/README.md`](infra/README.md) for the full walkthrough.
 
-> **Note:** this public repo ships **no GitHub Actions workflows**, so nothing
-> deploys or runs automatically when you fork it. The deploy and chart-cache
+> **Note:** this public repo ships only a read-only CI workflow
+> ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) that runs tests and
+> lint. Nothing deploys automatically when you fork it. The deploy and chart-cache
 > automation are provided as copy-paste templates in
 > [`docs/AUTOMATION.md`](docs/AUTOMATION.md) — add them to your own fork if you
 > want push-to-deploy.

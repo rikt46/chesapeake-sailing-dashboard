@@ -5,8 +5,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Changed
-- Issue templates apply the new triage labels (`status: needs-triage`, `type: bug`); the `enhancement` label they used was retired
+### Added
+- CI workflow running `npm test` under UTC and America/New_York, plus
+  `npm run lint`, on pull requests and pushes to `main`. Read-only, no secrets.
 
 ## [1.0.1] - 2026-06-22
 
