@@ -8,13 +8,33 @@
 //
 // Depends on:
 //   src/config.js    (NOAA_CURRENT_STATION for fallback direction labels)
-//   src/dates.js     (fmtDate)
+//   src/dates.js     (zonedDateKey, zonedHour, zonedWallClockToInstant)
 //   src/helpers.js   (parseSourceDate, degToCard)
 // ============================================================
 
 import { NOAA_CURRENT_STATION } from "./config.js";
-import { fmtDate } from "./dates.js";
+import { zonedDateKey, zonedHour, zonedWallClockToInstant } from "./dates.js";
 import { parseSourceDate, degToCard } from "./helpers.js";
+
+// NOAA currents are requested with time_zone=lst_ldt, so a zone-less
+// "YYYY-MM-DD HH:mm" is station wall time (DASHBOARD_TIME_ZONE), not the
+// browser's local zone. Offset timestamps are already absolute.
+function predictionInstant(rawTime) {
+  const source = String(rawTime).trim();
+  const wallClock = source.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (wallClock) {
+    const instant = zonedWallClockToInstant(
+      wallClock[1],
+      `${wallClock[2]}:${wallClock[3]}:${wallClock[4] || "00"}`,
+    );
+    if (!Number.isNaN(instant.getTime())) return instant;
+  }
+  return parseSourceDate(source);
+}
+
+function stationHourInstant(dateStr, hour) {
+  return zonedWallClockToInstant(dateStr, `${String(hour).padStart(2, "0")}:00:00`);
+}
 
 export function normalizeCurrentEventType(value) {
   const text = String(value || "").toLowerCase();
@@ -36,7 +56,7 @@ export function normalizeCurrentPredictionEvents(payload) {
 
   return rows.map((row) => {
     const rawTime = row.Time || row.time || row.t || row.DateTime || row.DATE_TIME;
-    const time = rawTime ? parseSourceDate(String(rawTime)) : null;
+    const time = rawTime ? predictionInstant(rawTime) : null;
     const type = normalizeCurrentEventType(row.Type || row.type || row.Event || row.event);
     const rawSpeed = row.Velocity_Major ?? row.velocity_major ?? row.Speed ?? row.speed ?? row.Velocity ?? row.v;
     const speed = rawSpeed === undefined || rawSpeed === "" ? null : Math.abs(Number(rawSpeed));
@@ -99,7 +119,7 @@ export function getCurrentPhaseFromEvents(events, targetTime) {
 export function getCurrentPredictionPhase(currentPredictions, dateStr, hour) {
   const events = normalizeCurrentPredictionEvents(currentPredictions);
   if (events.length === 0) return null;
-  const targetTime = new Date(`${dateStr}T${String(hour).padStart(2, "0")}:00:00`);
+  const targetTime = stationHourInstant(dateStr, hour);
   const phase = getCurrentPhaseFromEvents(events, targetTime);
   if (!phase) return null;
   return { ...phase, source: "NOAA current prediction" };
@@ -114,10 +134,12 @@ export function currentEventLabel(event) {
 
 export function summarizeCurrentPrediction(currentPredictions, dateStr) {
   const events = normalizeCurrentPredictionEvents(currentPredictions)
-    .filter((event) => fmtDate(event.time) === dateStr);
-  const targetHour = dateStr === fmtDate(new Date()) ? new Date().getHours() : 13;
+    .filter((event) => zonedDateKey(event.time) === dateStr);
+  const now = new Date();
+  const targetHour = dateStr === zonedDateKey(now) ? zonedHour(now) : 13;
   const phase = getCurrentPredictionPhase(currentPredictions, dateStr, targetHour);
-  const nextTurn = events.find((event) => event.time > new Date(`${dateStr}T${String(targetHour).padStart(2, "0")}:00:00`)) || null;
+  const cutoff = stationHourInstant(dateStr, targetHour);
+  const nextTurn = events.find((event) => event.time > cutoff) || null;
 
   return {
     events,

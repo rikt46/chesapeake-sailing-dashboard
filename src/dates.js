@@ -86,6 +86,22 @@ export function zonedHour(value, timeZone = DASHBOARD_TIME_ZONE) {
   }).format(d));
 }
 
+// Calendar date (YYYY-MM-DD) of an instant in the dashboard time zone.
+// fmtDate reads the viewer's local Y/M/D, which is a different day from the
+// station whenever the two zones disagree about midnight.
+export function zonedDateKey(value, timeZone = DASHBOARD_TIME_ZONE) {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  const map = {};
+  for (const part of new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(d)) {
+    map[part.type] = part.value;
+  }
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
 export function fmtDate(d) {
   const y  = d.getFullYear();
   const m  = String(d.getMonth() + 1).padStart(2, "0");
