@@ -8,7 +8,7 @@
 // src/marine_fetchers.js, src/bay_buoy.js, src/uv.js, src/ntm.js.
 //
 // Depends on:
-//   src/config.js             (NOAA_CURRENT_STATION, BAY_BUOY_STATION,
+//   src/config.js             (DASHBOARD_TIME_ZONE, NOAA_CURRENT_STATION, BAY_BUOY_STATION,
 //                              KEEL_DRAFT_FT, CHARTED_DEPTH_MLLW,
 //                              MIN_DEPTH_FT, DEFAULT_GUST_RATIO)
 //   src/dates.js              (getDateContext, getActiveDayIndex,
@@ -31,6 +31,7 @@
 // ============================================================
 
 import {
+  DASHBOARD_TIME_ZONE,
   NOAA_CURRENT_STATION,
   BAY_BUOY_STATION,
   KEEL_DRAFT_FT,
@@ -859,7 +860,7 @@ export function renderCurrentPrediction(currentPredictions, dayRec) {
     phaseEl.textContent = phaseLabel;
     phaseNoteEl.textContent = `${phase.currentDir} set near selected sailing window`;
     nextTurnEl.textContent = _currentEventLabel(summary.nextTurn);
-    nextTurnNoteEl.textContent = summary.nextTurn ? formatTime12(summary.nextTurn.time) : "No later turn on selected day";
+    nextTurnNoteEl.textContent = summary.nextTurn ? formatTime12(summary.nextTurn.time, DASHBOARD_TIME_ZONE) : "No later turn on selected day";
   }
 
   const hasOpposition = Boolean(dayRec && dayRec.hasCurrentOpposition);

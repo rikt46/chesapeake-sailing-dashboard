@@ -1066,6 +1066,43 @@ run('summarizes next NOAA current turn', () => {
   assert(summary.hasPrediction, 'has current predictions');
   assert(summary.events.length === 3, 'event count');
 });
+run('summarizes today in the station time zone, not the browser hour', () => {
+  // 16:30 EDT is 13:30 in America/Los_Angeles and 20:30 UTC. The station is
+  // still flooding after the 15:00 max flood; the next turn is the 18:00 slack.
+  // On main, a non-Eastern TZ reads the browser hour and picks a different turn.
+  const RealDate = Date;
+  const now = new RealDate('2026-07-15T16:30:00-04:00');
+
+  function FakeDate(...args) {
+    if (!(this instanceof FakeDate)) return new RealDate(...args);
+    return args.length === 0 ? new RealDate(now) : new RealDate(...args);
+  }
+  FakeDate.now = () => now.getTime();
+  FakeDate.UTC = RealDate.UTC;
+  FakeDate.parse = RealDate.parse;
+  FakeDate.prototype = RealDate.prototype;
+
+  const currentPredictions = {
+    current_predictions: {
+      cp: [
+        { Time: '2026-07-15 12:00', Type: 'Slack' },
+        { Time: '2026-07-15 15:00', Type: 'Max Flood', Velocity_Major: '1.2', meanFloodDir: 348 },
+        { Time: '2026-07-15 18:00', Type: 'Slack' },
+        { Time: '2026-07-15 21:00', Type: 'Max Ebb', Velocity_Major: '1.4' },
+      ],
+    },
+  };
+  const summary = withFakeDate(FakeDate, () => summarizeCurrentPrediction(currentPredictions, '2026-07-15'));
+  assertEqual(summary.phase && summary.phase.phase, 'flood', 'phase at 16:00 station time');
+  assertEqual(summary.phase && summary.phase.speed, 1.2, 'speed from the 15:00 max flood');
+  assertEqual(summary.nextTurn && summary.nextTurn.type, 'slack', 'next turn');
+  const stationHour = Number(new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hour: '2-digit',
+    hourCycle: 'h23',
+  }).format(summary.nextTurn.time));
+  assertEqual(stationHour, 18, 'next slack is 18:00 station time');
+});
 
 section('Bay buoy observations');
 run('normalizes CBIBS latest buoy observations', () => {

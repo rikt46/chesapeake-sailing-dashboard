@@ -5,6 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+- Current phase and the next slack or max are chosen in the station time zone
+  (`DASHBOARD_TIME_ZONE`) instead of the browser's local hour. (#20)
+
 ## [1.1.0] - 2026-11-12
 
 First tagged release since v1.0.0. It also carries the 1.0.1 changes below,

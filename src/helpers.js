@@ -67,8 +67,10 @@ export function parseSourceDate(value) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-export function formatTime12(date) {
-  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+export function formatTime12(date, timeZone) {
+  const options = { hour: "numeric", minute: "2-digit", hour12: true };
+  if (timeZone) options.timeZone = timeZone;
+  return date.toLocaleTimeString("en-US", options);
 }
 
 export function formatHour12(isoStr) {
