@@ -173,6 +173,28 @@ Or with explicit arguments:
 ./deploy.sh --bucket tolchester-sailing-site-a1b2c3d4 --dist-id E1234ABCDEF
 ```
 
+## NOAA chart-tile cache
+
+The sailing-area map reads NOAA chart tiles from `chart-cache/noaa/` when that
+cache is usable, and shows live NOAA Marine Chart tiles when it is not
+(`initNauticalMap` in `src/init.js`). `./deploy.sh` uploads a `chart-cache/`
+tree that is already on disk — `chart-cache/` is outside the script's exclude
+list — and does not itself download tiles.
+
+Fetch one tile and rewrite `chart-cache/noaa/manifest.json` by hand:
+
+```bash
+node ./scripts/sync_noaa_chart_cache.mjs
+```
+
+The script selects a single tile from a 10-minute time slot, so a second run in
+the same window repeats that tile. Coverage, the live-tile conditions, and
+`CHART_CACHE_DIR` are in the README under
+[NOAA chart-tile cache](../README.md#noaa-chart-tile-cache).
+
+The scheduled alternative is the copy-paste workflow in
+[Automation](../docs/AUTOMATION.md#2-refresh-the-noaa-chart-tile-cache-scheduled).
+
 ## Updating the Dashboard
 
 After the initial setup, the workflow is just:
