@@ -1427,7 +1427,13 @@ async function partialRefreshStatuses() {
     assert(typeof refresh === 'function', 'condition refresh timer was registered');
     await refresh();
     assertEqual(requests.length, 5, 'only four condition sources plus the wind fallback were fetched');
-    assert(!requests.some(url => url.includes('api.weather.gov')), 'forecast was not refreshed');
+    assert(!requests.some(url => {
+      try {
+        return new URL(url).hostname === 'api.weather.gov';
+      } catch {
+        return false;
+      }
+    }), 'forecast was not refreshed');
     return { statuses: getCachedData().sourceStatuses, failedForecast, oldWind };
   } finally {
     globalThis.document = prior.document;
