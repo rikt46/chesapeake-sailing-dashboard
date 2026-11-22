@@ -1382,8 +1382,20 @@ run('byId caches per document and warns once for a missing ID', () => {
   console.warn = (msg) => warnings.push(String(msg));
   globalThis.document = dom.window.document;
   try {
-    const first = byId('present');
-    assert(first === byId('present'), 'repeat lookup should return the same element');
+    const originalLookup = dom.window.document.getElementById;
+    let lookupCount = 0;
+    let first;
+    dom.window.document.getElementById = function (id) {
+      lookupCount++;
+      return originalLookup.call(this, id);
+    };
+    try {
+      first = byId('present');
+      assert(first === byId('present'), 'repeat lookup should return the same element');
+      assertEqual(lookupCount, 1, 'repeat lookup should use the cache');
+    } finally {
+      dom.window.document.getElementById = originalLookup;
+    }
     assert(byId('missingIdForTest') === null, 'missing ID should return null');
     assert(byId('missingIdForTest') === null, 'missing ID should keep returning null');
     assertEqual(warnings.length, 1, 'missing ID should be logged once');
