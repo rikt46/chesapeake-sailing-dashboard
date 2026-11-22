@@ -30,6 +30,7 @@
 //   src/fetchers.js           (fetchSource indirectly through app.js)
 // ============================================================
 
+import { byId } from "./dom.js";
 import {
   DASHBOARD_TIME_ZONE,
   NOAA_CURRENT_STATION,
@@ -190,9 +191,9 @@ export function hasRecommendationInputsAvailable() {
 }
 
 export function renderSourceStatus(sourceStatuses = {}) {
-  const sectionEl = document.getElementById("sourceStatus");
-  const summaryEl = document.getElementById("sourceStatusSummary");
-  const listEl = document.getElementById("sourceStatusList");
+  const sectionEl = byId("sourceStatus");
+  const summaryEl = byId("sourceStatusSummary");
+  const listEl = byId("sourceStatusList");
   if (!sectionEl || !summaryEl || !listEl) return;
 
   const params = new URLSearchParams(window.location.search);
@@ -230,19 +231,19 @@ export function renderSourceStatus(sourceStatuses = {}) {
 
 export function renderRecommendation(recs) {
   const gate = getRecommendationGate(cachedData.sourceStatuses || {});
-  const el = document.getElementById("recommendation");
-  const icon = document.getElementById("recIcon");
-  const bannerLabel = document.getElementById("recLabel");
-  const title = document.getElementById("recTitle");
-  const detail = document.getElementById("recDetail");
-  const risk = document.getElementById("recRisk");
-  const meta = document.getElementById("recMeta");
-  const briefingRating = document.getElementById("briefingRating");
-  const briefingRatingNote = document.getElementById("briefingRatingNote");
-  const briefingWindow = document.getElementById("briefingWindow");
-  const briefingWindowNote = document.getElementById("briefingWindowNote");
-  const briefingChange = document.getElementById("briefingChange");
-  const briefingChangeNote = document.getElementById("briefingChangeNote");
+  const el = byId("recommendation");
+  const icon = byId("recIcon");
+  const bannerLabel = byId("recLabel");
+  const title = byId("recTitle");
+  const detail = byId("recDetail");
+  const risk = byId("recRisk");
+  const meta = byId("recMeta");
+  const briefingRating = byId("briefingRating");
+  const briefingRatingNote = byId("briefingRatingNote");
+  const briefingWindow = byId("briefingWindow");
+  const briefingWindowNote = byId("briefingWindowNote");
+  const briefingChange = byId("briefingChange");
+  const briefingChangeNote = byId("briefingChangeNote");
 
   if (gate.blocked && cachedData.fallbackRecommendations) {
     const fallbackDay = cachedData.fallbackRecommendations[getActiveDayIndex()];
@@ -392,10 +393,10 @@ export function renderRecommendation(recs) {
 }
 
 export function renderSimpleSummary(recs) {
-  const titleEl = document.getElementById("simpleTitle");
-  const decisionEl = document.getElementById("simpleDecision");
-  const copyEl = document.getElementById("simpleCopy");
-  const basicsEl = document.getElementById("simpleBasics");
+  const titleEl = byId("simpleTitle");
+  const decisionEl = byId("simpleDecision");
+  const copyEl = byId("simpleCopy");
+  const basicsEl = byId("simpleBasics");
   if (!titleEl || !decisionEl || !copyEl || !basicsEl) return;
 
   const gate = getRecommendationGate(cachedData.sourceStatuses || {});
@@ -465,7 +466,7 @@ export function renderSimpleSummary(recs) {
 }
 
 export function renderOutlookStrip(recs) {
-  const strip = document.getElementById("outlookStrip");
+  const strip = byId("outlookStrip");
   if (!strip) return;
   const { days } = getDateContext();
   const gate = getRecommendationGate(cachedData.sourceStatuses || {});
@@ -559,30 +560,30 @@ export function updateKPIs(hourlyPeriods, gustRatio, dayRec) {
 
     const maxGust = Math.round(maxWind * gustRatio);
 
-    document.getElementById("kpiWind").textContent = `${avgWind}\u2013${maxWind}`;
-    document.getElementById("kpiWindDir").textContent = windDirs[Math.floor(windDirs.length / 2)];
-    document.getElementById("kpiGust").textContent = `~${maxGust}`;
-    document.getElementById("kpiGustNote").textContent = `est. ${gustRatio.toFixed(2)}× sustained`;
+    byId("kpiWind").textContent = `${avgWind}\u2013${maxWind}`;
+    byId("kpiWindDir").textContent = windDirs[Math.floor(windDirs.length / 2)];
+    byId("kpiGust").textContent = `~${maxGust}`;
+    byId("kpiGustNote").textContent = `est. ${gustRatio.toFixed(2)}× sustained`;
 
     const minTemp = Math.min(...temps);
     const maxTemp = Math.max(...temps);
-    document.getElementById("kpiAirTemp").textContent = maxTemp;
-    document.getElementById("kpiAirTempRange").textContent = `${minTemp}\u2013${maxTemp}\u00b0F range`;
+    byId("kpiAirTemp").textContent = maxTemp;
+    byId("kpiAirTempRange").textContent = `${minTemp}\u2013${maxTemp}\u00b0F range`;
   } else {
-    document.getElementById("kpiWind").textContent = "--";
-    document.getElementById("kpiWindDir").textContent = "--";
-    document.getElementById("kpiGust").textContent = "--";
-    document.getElementById("kpiGustNote").textContent = "";
-    document.getElementById("kpiAirTemp").textContent = "--";
-    document.getElementById("kpiAirTempRange").textContent = "\u00a0";
+    byId("kpiWind").textContent = "--";
+    byId("kpiWindDir").textContent = "--";
+    byId("kpiGust").textContent = "--";
+    byId("kpiGustNote").textContent = "";
+    byId("kpiAirTemp").textContent = "--";
+    byId("kpiAirTempRange").textContent = "\u00a0";
   }
 
   if (dayRec && dayRec.estBsp > 0) {
-    document.getElementById("kpiBsp").textContent = `~${dayRec.estBsp.toFixed(1)}`;
-    document.getElementById("kpiBspNote").textContent = dayRec.readiness ? `${dayRec.readiness} day` : "from polars";
+    byId("kpiBsp").textContent = `~${dayRec.estBsp.toFixed(1)}`;
+    byId("kpiBspNote").textContent = dayRec.readiness ? `${dayRec.readiness} day` : "from polars";
   } else {
-    document.getElementById("kpiBsp").textContent = "--";
-    document.getElementById("kpiBspNote").textContent = "from polars";
+    byId("kpiBsp").textContent = "--";
+    byId("kpiBspNote").textContent = "from polars";
   }
 }
 
@@ -600,7 +601,7 @@ function renderForecast(forecastPeriods) {
     return dayNamesLower.some((dn) => n.includes(dn));
   });
 
-  const grid = document.getElementById("forecastGrid");
+  const grid = byId("forecastGrid");
   if (!grid) return;
   grid.replaceChildren();
 
@@ -636,7 +637,7 @@ function renderForecast(forecastPeriods) {
 export function renderTideTable(tides) {
   if (!tides || !tides.predictions) return;
 
-  const tbody = document.getElementById("tideTableBody");
+  const tbody = byId("tideTableBody");
   const { dayDates } = getDateContext();
   const dateFilter = dayDates[getActiveDayIndex()];
 
@@ -668,7 +669,7 @@ export function renderTideTable(tides) {
 }
 
 function renderConditions(wind, airTemp, waterTemp, waterLevel) {
-  const grid = document.getElementById("conditionsGrid");
+  const grid = byId("conditionsGrid");
   if (!grid) return;
   const items = [];
 
@@ -743,9 +744,9 @@ function renderConditions(wind, airTemp, waterTemp, waterLevel) {
 }
 
 export function renderNowBar(wind, waterTemp, waterLevel) {
-  const windEl = document.getElementById("nowBarWind");
-  const waterEl = document.getElementById("nowBarWater");
-  const levelEl = document.getElementById("nowBarLevel");
+  const windEl = byId("nowBarWind");
+  const waterEl = byId("nowBarWater");
+  const levelEl = byId("nowBarLevel");
 
   if (windEl) {
     if (wind && wind.data && wind.data[0]) {
@@ -778,15 +779,15 @@ export function renderNowBar(wind, waterTemp, waterLevel) {
 }
 
 export function renderMarineConditions(marineForecasts) {
-  const zoneEl = document.getElementById("marineZone");
-  const periodEl = document.getElementById("marinePeriod");
-  const wavesEl = document.getElementById("marineWaves");
-  const visibilityEl = document.getElementById("marineVisibility");
-  const visibilityNoteEl = document.getElementById("marineVisibilityNote");
-  const summaryEl = document.getElementById("marineSummary");
-  const uvCardEl = document.getElementById("uvCard");
-  const uvIndexEl = document.getElementById("uvIndex");
-  const uvNoteEl = document.getElementById("uvNote");
+  const zoneEl = byId("marineZone");
+  const periodEl = byId("marinePeriod");
+  const wavesEl = byId("marineWaves");
+  const visibilityEl = byId("marineVisibility");
+  const visibilityNoteEl = byId("marineVisibilityNote");
+  const summaryEl = byId("marineSummary");
+  const uvCardEl = byId("uvCard");
+  const uvIndexEl = byId("uvIndex");
+  const uvNoteEl = byId("uvNote");
   if (!zoneEl || !periodEl || !wavesEl || !visibilityEl || !summaryEl) return;
 
   const { dayDates } = getDateContext();
@@ -830,16 +831,16 @@ export function renderMarineConditions(marineForecasts) {
 }
 
 export function renderCurrentPrediction(currentPredictions, dayRec) {
-  const stationEl = document.getElementById("currentStation");
-  const sourceEl = document.getElementById("currentSource");
-  const phaseCard = document.getElementById("currentPhaseCard");
-  const phaseEl = document.getElementById("currentPhase");
-  const phaseNoteEl = document.getElementById("currentPhaseNote");
-  const nextTurnEl = document.getElementById("currentNextTurn");
-  const nextTurnNoteEl = document.getElementById("currentNextTurnNote");
-  const oppositionCard = document.getElementById("currentOppositionCard");
-  const oppositionEl = document.getElementById("currentOpposition");
-  const oppositionNoteEl = document.getElementById("currentOppositionNote");
+  const stationEl = byId("currentStation");
+  const sourceEl = byId("currentSource");
+  const phaseCard = byId("currentPhaseCard");
+  const phaseEl = byId("currentPhase");
+  const phaseNoteEl = byId("currentPhaseNote");
+  const nextTurnEl = byId("currentNextTurn");
+  const nextTurnNoteEl = byId("currentNextTurnNote");
+  const oppositionCard = byId("currentOppositionCard");
+  const oppositionEl = byId("currentOpposition");
+  const oppositionNoteEl = byId("currentOppositionNote");
   if (!stationEl || !sourceEl || !phaseCard || !phaseEl || !phaseNoteEl || !nextTurnEl || !nextTurnNoteEl || !oppositionCard || !oppositionEl || !oppositionNoteEl) return;
 
   const { dayDates } = getDateContext();
@@ -874,17 +875,17 @@ export function renderCurrentPrediction(currentPredictions, dayRec) {
 }
 
 export function renderBayBuoyCheck(bayBuoy, dayRec) {
-  const stationEl = document.getElementById("buoyStation");
-  const sourceEl = document.getElementById("buoySource");
-  const windCard = document.getElementById("buoyWindCard");
-  const waveCard = document.getElementById("buoyWaveCard");
-  const realityCard = document.getElementById("buoyRealityCard");
-  const windEl = document.getElementById("buoyWind");
-  const windNoteEl = document.getElementById("buoyWindNote");
-  const waveEl = document.getElementById("buoyWaves");
-  const waveNoteEl = document.getElementById("buoyWaveNote");
-  const realityEl = document.getElementById("buoyReality");
-  const realityNoteEl = document.getElementById("buoyRealityNote");
+  const stationEl = byId("buoyStation");
+  const sourceEl = byId("buoySource");
+  const windCard = byId("buoyWindCard");
+  const waveCard = byId("buoyWaveCard");
+  const realityCard = byId("buoyRealityCard");
+  const windEl = byId("buoyWind");
+  const windNoteEl = byId("buoyWindNote");
+  const waveEl = byId("buoyWaves");
+  const waveNoteEl = byId("buoyWaveNote");
+  const realityEl = byId("buoyReality");
+  const realityNoteEl = byId("buoyRealityNote");
   if (!stationEl || !sourceEl || !windCard || !waveCard || !realityCard || !windEl || !windNoteEl || !waveEl || !waveNoteEl || !realityEl || !realityNoteEl) return;
 
   const summary = getBayBuoySummary(bayBuoy);
@@ -932,13 +933,13 @@ export function renderBayBuoyCheck(bayBuoy, dayRec) {
 }
 
 export function renderStormWatch(hourlyPeriods, marineAlerts) {
-  const statusCard = document.getElementById("stormStatusCard");
-  const statusEl = document.getElementById("stormStatus");
-  const statusNoteEl = document.getElementById("stormStatusNote");
-  const thunderEl = document.getElementById("stormThunder");
-  const thunderNoteEl = document.getElementById("stormThunderNote");
-  const alertEl = document.getElementById("stormAlert");
-  const alertNoteEl = document.getElementById("stormAlertNote");
+  const statusCard = byId("stormStatusCard");
+  const statusEl = byId("stormStatus");
+  const statusNoteEl = byId("stormStatusNote");
+  const thunderEl = byId("stormThunder");
+  const thunderNoteEl = byId("stormThunderNote");
+  const alertEl = byId("stormAlert");
+  const alertNoteEl = byId("stormAlertNote");
   if (!statusCard || !statusEl || !statusNoteEl || !thunderEl || !thunderNoteEl || !alertEl || !alertNoteEl) return;
 
   const { dayDates } = getDateContext();
@@ -962,7 +963,7 @@ export function renderStormWatch(hourlyPeriods, marineAlerts) {
 }
 
 export function renderDepthWindows(tideHourly) {
-  const container = document.getElementById("depthWindows");
+  const container = byId("depthWindows");
   if (!container) return;
 
   const { dayDates } = getDateContext();
@@ -1165,8 +1166,8 @@ export function renderAll() {
 
 export function updateTimestamp(sourceStatuses = {}) {
   const now = new Date();
-  const lastUpdateEl = document.getElementById("lastUpdate");
-  const sourceUpdateEl = document.getElementById("sourceUpdate");
+  const lastUpdateEl = byId("lastUpdate");
+  const sourceUpdateEl = byId("sourceUpdate");
 
   if (lastUpdateEl) {
     lastUpdateEl.textContent =
