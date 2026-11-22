@@ -11,6 +11,7 @@ import { JSDOM } from "jsdom";
 import { dashboardTestExports as dashboard } from "./app.js";
 import { startAutoRefresh } from "./src/init.js";
 import { getCachedData, setCachedData } from "./src/render.js";
+import { byId } from "./src/dom.js";
 import { CONDITION_REFRESH_MS } from "./src/config.js";
 
 let pass = 0, fail = 0, warn = 0, skipped = 0;
@@ -1367,6 +1368,41 @@ run('Missing water level shows em-dash fallback', () => {
     renderNowBar(null, null, null);
     assertEqual(globalThis.document.getElementById('nowBarLevel').textContent, '\u2013', 'water level fallback');
   } finally {
+    globalThis.document = priorDocument;
+    dom.window.close();
+  }
+});
+
+section('DOM lookup cache');
+run('byId caches per document and warns once for a missing ID', () => {
+  const dom = new JSDOM(`<div id="present"></div>`);
+  const priorDocument = globalThis.document;
+  const priorWarn = console.warn;
+  const warnings = [];
+  console.warn = (msg) => warnings.push(String(msg));
+  globalThis.document = dom.window.document;
+  try {
+    const originalLookup = dom.window.document.getElementById;
+    let lookupCount = 0;
+    let first;
+    dom.window.document.getElementById = function (id) {
+      lookupCount++;
+      return originalLookup.call(this, id);
+    };
+    try {
+      first = byId('present');
+      assert(first === byId('present'), 'repeat lookup should return the same element');
+      assertEqual(lookupCount, 1, 'repeat lookup should use the cache');
+    } finally {
+      dom.window.document.getElementById = originalLookup;
+    }
+    assert(byId('missingIdForTest') === null, 'missing ID should return null');
+    assert(byId('missingIdForTest') === null, 'missing ID should keep returning null');
+    assertEqual(warnings.length, 1, 'missing ID should be logged once');
+    first.remove();
+    assert(byId('present') === null, 'removed element should not be served from the cache');
+  } finally {
+    console.warn = priorWarn;
     globalThis.document = priorDocument;
     dom.window.close();
   }
